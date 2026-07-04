@@ -449,11 +449,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Color Mappings */
-.color-p-yellow { background: var(--ball-pastel-yellow); color: #0f172a; }
-.color-p-blue { background: var(--ball-pastel-blue); color: #0f172a; }
-.color-p-red { background: var(--ball-pastel-red); color: #0f172a; }
-.color-p-gray { background: var(--ball-pastel-gray); color: #0f172a; }
-.color-p-green { background: var(--ball-pastel-green); color: #0f172a; }
+.color-p-yellow { background: var(--ball-pastel-yellow); color: #ffffff; }
+.color-p-blue { background: var(--ball-pastel-blue); color: #ffffff; }
+.color-p-red { background: var(--ball-pastel-red); color: #ffffff; }
+.color-p-gray { background: var(--ball-pastel-gray); color: #ffffff; }
+.color-p-green { background: var(--ball-pastel-green); color: #ffffff; }
 
 /* Dynamic Glow Highlight for matched numbers */
 .slot-circle.matched,
@@ -605,7 +605,12 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
   font-size: 0.68rem;
   font-weight: 800;
-  color: #fff;
+  color: #ffffff;
+  text-shadow: 
+    -1px -1px 0 #0f172a,  
+     1px -1px 0 #0f172a,
+    -1px  1px 0 #0f172a,
+     1px  1px 0 #0f172a;
   box-shadow: inset -1px -1px 3px rgba(0,0,0,0.15);
 }
 

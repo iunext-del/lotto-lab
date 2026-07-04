@@ -336,7 +336,7 @@ function getBallPastelHex(num) {
 }
 
 function getBallTextHex(num) {
-  return '#0f172a'; // 단일 진한 다크네이비 텍스트로 통일
+  return '#ffffff'; // 안쪽 화이트 글자 색상으로 통일
 }
 
 function getBallColorClass(num) {
@@ -486,10 +486,19 @@ function updatePhysics(now = performance.now()) {
     ctx.lineWidth = 1;
     ctx.stroke();
     
-    ctx.fillStyle = ball.textHex;
     ctx.font = 'bold 8.5px Inter, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
+    
+    // Draw outline
+    ctx.strokeStyle = '#0f172a';
+    ctx.lineWidth = 1.8;
+    ctx.lineJoin = 'round';
+    ctx.miterLimit = 2;
+    ctx.strokeText(ball.num.toString(), ball.x, ball.y + 0.4);
+    
+    // Draw fill text
+    ctx.fillStyle = ball.textHex;
     ctx.fillText(ball.num.toString(), ball.x, ball.y + 0.4);
   });
 
