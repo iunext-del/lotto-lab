@@ -81,7 +81,8 @@ Forbidden_References: ["Company_Brain/*", "Project_Brain/*"]
     - 승인된 목적과 직접 관련 없는 파일 또는 모듈
     - **Runtime Control Documents**:
       - `AGENTS.md`, `Constitution.md`, `Runtime_Kernel.md`, `Thinking_Engine.md` 파일 목록을 포함하여, Runtime의 동작, Permission, Routing, Approval 또는 기타 Runtime 제어 규칙을 정의하는 모든 문서는 Runtime Control Documents로 간주합니다.
-      - Runtime Control Documents는 어떠한 경우에도 경미한 수정(Minor Correction) 예외 적용을 받지 않으며, 이에 대한 수정은 지시의 크기와 무관하게 항상 Requirement Interpretation ➔ Proposal ➔ "승인" ➔ Implementation 절차를 따릅니다.
+      - Runtime Control Documents는 Minor Correction 대상이 아닙니다.
+      - Runtime Control Documents의 모든 수정은 항상 Requirement Interpretation ➔ Proposal ➔ "승인" ➔ Implementation 절차를 따릅니다.
 
 ## 5. Runtime Capability
 - **Capability 구성**:
@@ -136,7 +137,7 @@ Forbidden_References: ["Company_Brain/*", "Project_Brain/*"]
 - **ALLOW**:
   - Stage 3의 검증(Validation) 완료 후 하나의 변경 단위를 요약한 로컬 Git Commit을 자율적으로 생성할 권한을 가집니다.
 - **FORBID**:
-  - 예약 명령어 "푸시" 입력 없는 Git Push. Git Push는 오직 사용자가 예약 명령어 "푸시"를 입력하여 명시적으로 승인한 경우에만 실행됩니다.
+  - 예약 명령어 "푸시" 입력 없는 Git Push. Git Push는 Reserved Command "푸시" 입력으로만 승인됩니다.
 
 ## 8. Reserved Command Matching
 - **Reserved Commands**: 다음 명령어들은 예약어(Reserved Commands)로 규정합니다.
