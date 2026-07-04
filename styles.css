@@ -5,9 +5,9 @@
   --font-primary: 'Inter', system-ui, -apple-system, sans-serif;
   --font-display: 'Outfit', var(--font-primary);
   
-  --bg-app: #d8e2ec;
-  --bg-panel: rgba(255, 255, 255, 0.94);
-  --border-glass: rgba(148, 163, 184, 0.4);
+  --bg-app: #64748b;
+  --bg-panel: rgba(241, 245, 249, 0.98);
+  --border-glass: rgba(148, 163, 184, 0.25);
   --border-element: rgba(148, 163, 184, 0.35);
   
   --text-main: #0f172a;
@@ -37,7 +37,7 @@
 }
 
 body {
-  background: linear-gradient(135deg, #eef2f6 0%, #cbd5e1 100%);
+  background: linear-gradient(135deg, #64748b 0%, #334155 100%);
   color: var(--text-main);
   font-family: var(--font-primary);
   min-height: 100vh;
@@ -58,33 +58,31 @@ body {
 .orb-1 {
   width: 50vw;
   height: 50vw;
-  top: -15vw;
-  left: -10vw;
-  background: radial-gradient(circle, #e8e3ff 0%, rgba(255,255,255,0) 70%);
-  animation: floatOrb 25s infinite alternate ease-in-out;
+  background: radial-gradient(circle, rgba(129, 140, 248, 0.15) 0%, rgba(255,255,255,0) 70%);
+  top: -10%;
+  left: -10%;
 }
 
 .orb-2 {
-  width: 45vw;
-  height: 45vw;
-  bottom: -10vw;
-  right: -5vw;
-  background: radial-gradient(circle, #dafbe8 0%, rgba(255,255,255,0) 70%);
-  animation: floatOrb 22s infinite alternate-reverse ease-in-out;
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, rgba(255,255,255,0) 70%);
+  bottom: -20%;
+  right: -10%;
 }
 
 .orb-3 {
-  width: 35vw;
-  height: 35vw;
-  top: 30vh;
-  left: 45vw;
-  background: radial-gradient(circle, #fde2e8 0%, rgba(255,255,255,0) 70%);
-  animation: floatOrb 18s infinite alternate ease-in-out;
+  width: 40vw;
+  height: 40vw;
+  background: radial-gradient(circle, rgba(253, 164, 175, 0.12) 0%, rgba(255,255,255,0) 70%);
+  top: 40%;
+  left: 60%;
 }
 
-@keyframes floatOrb {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(60px, 40px) scale(1.1); }
+/* --- Typography --- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  margin: 0;
 }
 
 /* --- App Layout --- */
@@ -109,7 +107,7 @@ body {
   font-size: 2.2rem;
   font-weight: 800;
   letter-spacing: -0.04em;
-  color: #1e293b;
+  color: #f8fafc;
   margin-bottom: 2px;
 }
 
@@ -120,7 +118,7 @@ body {
 }
 
 .app-subtitle {
-  color: var(--text-muted);
+  color: #cbd5e1;
   font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.12em;
