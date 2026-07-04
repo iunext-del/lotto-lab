@@ -1418,6 +1418,13 @@ function renderDrawInfoDOM(data, targetDraw, beforeDraw) {
 
 // Background auto loader on page load
 async function loadLatestActualDrawInfo() {
+  const CURRENT_CACHE_VERSION = '1.1.1';
+  const storedVersion = localStorage.getItem('ados_draw_cache_version');
+  if (storedVersion !== CURRENT_CACHE_VERSION) {
+    localStorage.removeItem('ados_cached_draw_data');
+    localStorage.setItem('ados_draw_cache_version', CURRENT_CACHE_VERSION);
+  }
+
   const ballsRow = document.getElementById('info-balls-row');
   let targetDraw = getCalculatedLatestDraw();
   let beforeDraw = false;
