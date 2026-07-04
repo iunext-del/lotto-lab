@@ -525,9 +525,17 @@ btnModeCards.forEach(card => {
     card.classList.add('active');
     currentMode = parseInt(card.dataset.mode);
     
-    // Sync mobile select dropdown
-    const mSelectMode = document.getElementById('m-select-mode');
-    if (mSelectMode) mSelectMode.value = currentMode;
+    // Sync mobile segmented pill buttons
+    const mPillMode = document.getElementById('m-pill-mode');
+    if (mPillMode) {
+      const buttons = mPillMode.querySelectorAll('.m-pill-btn');
+      buttons.forEach(btn => {
+        btn.classList.remove('active');
+        if (parseInt(btn.dataset.value) === currentMode) {
+          btn.classList.add('active');
+        }
+      });
+    }
     
     badgeText.textContent = `${MODE_DESCRIPTIONS[currentMode].name.toUpperCase()} 선택됨`;
   });
@@ -1628,64 +1636,77 @@ if (mBtnClearHistory) {
   mBtnClearHistory.addEventListener('click', clearHistoryAll);
 }
 
-// --- Mobile settings elements declaration ---
-const mSelectMode = document.getElementById('m-select-mode');
-const mSelectSets = document.getElementById('m-select-sets');
-const mSelectTemp = document.getElementById('m-select-temp');
-const mSelectPeriod = document.getElementById('m-select-period');
+// --- Mobile settings elements (Pill Groups) declaration ---
+const mPillMode = document.getElementById('m-pill-mode');
+const mPillSets = document.getElementById('m-pill-sets');
+const mPillTemp = document.getElementById('m-pill-temp');
+const mPillPeriod = document.getElementById('m-pill-period');
+
+// Helper to switch active classes inside a pill group
+function setupPillGroupSync(container, onSelect) {
+  if (!container) return;
+  const buttons = container.querySelectorAll('.m-pill-btn');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      onSelect(btn.dataset.value);
+    });
+  });
+}
 
 // Sync Mobile -> Desktop
-if (mSelectMode) {
-  mSelectMode.addEventListener('change', () => {
-    currentMode = parseInt(mSelectMode.value);
-    
-    // Update desktop mode option highlights
-    const desktopCards = document.querySelectorAll('.mode-option');
-    desktopCards.forEach(card => {
-      card.classList.remove('active');
-      if (parseInt(card.dataset.mode) === currentMode) {
-        card.classList.add('active');
-      }
-    });
-    badgeText.textContent = `${MODE_DESCRIPTIONS[currentMode].name.toUpperCase()} 선택됨`;
+setupPillGroupSync(mPillMode, (val) => {
+  currentMode = parseInt(val);
+  
+  // Update desktop cards
+  const desktopCards = document.querySelectorAll('.mode-option');
+  desktopCards.forEach(card => {
+    card.classList.remove('active');
+    if (parseInt(card.dataset.mode) === currentMode) {
+      card.classList.add('active');
+    }
+  });
+  badgeText.textContent = `${MODE_DESCRIPTIONS[currentMode].name.toUpperCase()} 선택됨`;
+});
+
+setupPillGroupSync(mPillSets, (val) => {
+  selectSets.value = val;
+});
+
+setupPillGroupSync(mPillTemp, (val) => {
+  selectTemp.value = val;
+});
+
+setupPillGroupSync(mPillPeriod, (val) => {
+  selectPeriod.value = val;
+  activePeriod = val;
+  updateActiveWeights();
+  badgeText.textContent = `분석 통계 기간 변경: ${selectPeriod.options[selectPeriod.selectedIndex].text}`;
+});
+
+// Sync Desktop -> Mobile
+function syncMobilePillActive(container, value) {
+  if (!container) return;
+  const buttons = container.querySelectorAll('.m-pill-btn');
+  buttons.forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.dataset.value === String(value)) {
+      btn.classList.add('active');
+    }
   });
 }
 
-if (mSelectSets) {
-  mSelectSets.addEventListener('change', () => {
-    selectSets.value = mSelectSets.value;
-  });
-}
-
-if (mSelectTemp) {
-  mSelectTemp.addEventListener('change', () => {
-    selectTemp.value = mSelectTemp.value;
-  });
-}
-
-if (mSelectPeriod) {
-  mSelectPeriod.addEventListener('change', () => {
-    selectPeriod.value = mSelectPeriod.value;
-    activePeriod = selectPeriod.value;
-    updateActiveWeights();
-    badgeText.textContent = `분석 통계 기간 변경: ${selectPeriod.options[selectPeriod.selectedIndex].text}`;
-  });
-}
-
-// Sync Desktop -> Mobile (Adds listeners to desktop selects to update mobile selects)
 selectSets.addEventListener('change', () => {
-  if (mSelectSets) mSelectSets.value = selectSets.value;
+  syncMobilePillActive(mPillSets, selectSets.value);
 });
 
 selectTemp.addEventListener('change', () => {
-  if (mSelectTemp) mSelectTemp.value = selectTemp.value;
+  syncMobilePillActive(mPillTemp, selectTemp.value);
 });
 
-// For Desktop Card Click: we already sync to .m-mode-chip in the desktop listener,
-// but since we replaced chips with select dropdown, let's sync to mSelectMode instead!
-// Let's modify the desktop listener sync code in app.js later. For now, let's add desktop selectPeriod listener sync:
 selectPeriod.addEventListener('change', () => {
-  if (mSelectPeriod) mSelectPeriod.value = selectPeriod.value;
+  syncMobilePillActive(mPillPeriod, selectPeriod.value);
 });
 
 // Initialize Marking Board, Load Storage, and Auto Fetch Actual Draw Info on Page Load

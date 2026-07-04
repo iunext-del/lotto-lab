@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="styles.css?v=1.0.1">
+  <link rel="stylesheet" href="styles.css?v=1.0.2">
 </head>
 <body>
   <!-- Soft Pastel Background Orbs -->
@@ -336,43 +336,43 @@
             <!-- 조합 모드 -->
             <div class="m-select-group">
               <label class="m-control-label">추출 조합 모드</label>
-              <select id="m-select-mode" class="m-styled-select">
-                <option value="1">STAT - STAT (전형적 피팅 중심)</option>
-                <option value="2">RAND - STAT (랜덤 후 균형 보완)</option>
-                <option value="3">STAT - RAND (통계 선점 후 랜덤)</option>
-                <option value="4">RAND - RAND (순수 이중 무작위)</option>
-              </select>
+              <div class="m-pill-grid m-mode-grid" id="m-pill-mode">
+                <button type="button" class="m-pill-btn active" data-value="1">STAT-STAT</button>
+                <button type="button" class="m-pill-btn" data-value="2">RAND-STAT</button>
+                <button type="button" class="m-pill-btn" data-value="3">STAT-RAND</button>
+                <button type="button" class="m-pill-btn" data-value="4">RAND-RAND</button>
+              </div>
             </div>
 
             <!-- 세트수 & 다양성 온도 -->
             <div class="m-select-row">
               <div class="m-select-group">
                 <label class="m-control-label">세트 수</label>
-                <select id="m-select-sets" class="m-styled-select">
-                  <option value="3">3세트</option>
-                  <option value="5">5세트</option>
-                  <option value="10">10세트</option>
-                </select>
+                <div class="m-pill-row" id="m-pill-sets">
+                  <button type="button" class="m-pill-btn" data-value="1">1세트</button>
+                  <button type="button" class="m-pill-btn active" data-value="3">3세트</button>
+                  <button type="button" class="m-pill-btn" data-value="5">5세트</button>
+                </div>
               </div>
               <div class="m-select-group">
                 <label class="m-control-label">다양성 온도</label>
-                <select id="m-select-temp" class="m-styled-select">
-                  <option value="0.7">T = 0.7 (Conservative)</option>
-                  <option value="1.0">T = 1.0 (Balanced)</option>
-                  <option value="1.3">T = 1.3 (Aggressive)</option>
-                </select>
+                <div class="m-pill-row" id="m-pill-temp">
+                  <button type="button" class="m-pill-btn" data-value="0.5">T = 0.5</button>
+                  <button type="button" class="m-pill-btn active" data-value="1.0">T = 1.0</button>
+                  <button type="button" class="m-pill-btn" data-value="2.0">T = 2.0</button>
+                </div>
               </div>
             </div>
 
             <!-- 분석 통계 기간 -->
             <div class="m-select-group">
               <label class="m-control-label">분석 통계 기간</label>
-              <select id="m-select-period" class="m-styled-select">
-                <option value="all">전체 회차 누적 통계</option>
-                <option value="1year">최근 1개년 (52회)</option>
-                <option value="3years">최근 3개년 (156회)</option>
-                <option value="5years">최근 5개년 (260회)</option>
-              </select>
+              <div class="m-pill-row" id="m-pill-period">
+                <button type="button" class="m-pill-btn active" data-value="all">전체 회차</button>
+                <button type="button" class="m-pill-btn" data-value="1year">1개년</button>
+                <button type="button" class="m-pill-btn" data-value="3years">3개년</button>
+                <button type="button" class="m-pill-btn" data-value="5years">5개년</button>
+              </div>
             </div>
 
             <!-- 번호 필터 (고정수/제외수) 1~45 보드판 -->
@@ -414,6 +414,6 @@
   </div>
 
   <!-- JavaScript -->
-  <script src="app.js?v=1.0.1"></script>
+  <script src="app.js?v=1.0.2"></script>
 </body>
 </html>

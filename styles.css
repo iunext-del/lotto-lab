@@ -1631,14 +1631,16 @@ h1, h2, h3, h4, h5, h6 {
   
   .m-settings-summary {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    font-size: 0.85rem;
+    gap: 8px;
+    font-size: 0.88rem;
     font-weight: 800;
     color: var(--text-main);
     cursor: pointer;
     list-style: none;
     user-select: none;
+    padding: 6px 0;
   }
   
   .m-settings-summary::-webkit-details-marker {
@@ -1659,42 +1661,73 @@ h1, h2, h3, h4, h5, h6 {
     margin-top: 14px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
     animation: fadeIn 0.2s ease-out;
   }
   
   .m-select-group {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 6px;
   }
   
   .m-select-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 12px;
   }
   
   .m-control-label {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 700;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.04em;
   }
   
-  .m-styled-select {
-    width: 100%;
-    padding: 8px 10px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--text-main);
-    background: rgba(255, 255, 255, 0.65);
+  /* Premium Segmented Pill Button Tabs */
+  .m-pill-row {
+    display: flex;
+    background: rgba(255, 255, 255, 0.45);
     border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 10px;
+    padding: 3px;
+    gap: 2px;
+  }
+  
+  .m-pill-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    background: rgba(255, 255, 255, 0.45);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 10px;
+    padding: 3px;
+    gap: 4px;
+  }
+  
+  .m-pill-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 7px 0;
     border-radius: 8px;
-    outline: none;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
     cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+  }
+  
+  .m-pill-btn.active {
+    background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(167, 139, 250, 0.25), 0 2px 4px rgba(244, 114, 182, 0.15);
+  }
+  
+  .m-pill-btn:active {
+    transform: scale(0.96);
   }
   
   .m-filter-desc {
