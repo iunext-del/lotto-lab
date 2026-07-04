@@ -1395,7 +1395,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* --- Footer --- */
 .app-footer {
-  text-align: right;
+  text-align: left;
   margin-top: 16px;
   padding-top: 4px;
 }
