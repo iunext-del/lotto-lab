@@ -284,8 +284,12 @@ body {
 /* --- Parameters Grid --- */
 .parameter-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
+}
+
+.parameter-grid .param-item:nth-child(3) {
+  grid-column: span 2;
 }
 
 .param-item {
