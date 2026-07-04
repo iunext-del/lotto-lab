@@ -1,4 +1,4 @@
-// app.js - Pastel Flex Lotto Lab Client Logic with Local Storage & Matcher
+// app.js - Pastel Flex Lotto Lab Client Logic with Local Storage, Matcher, and Pinned/Excluded Filters
 
 // --- Data Constants ---
 const FREQUENCY_SCORES = {
@@ -28,6 +28,8 @@ const MODE_DESCRIPTIONS = {
 let currentMode = 1;
 let isDrawing = false;
 let history = []; // Saved lotto tickets database
+const pinnedNumbers = new Set();
+const excludedNumbers = new Set();
 
 // --- DOM References ---
 const btnModeCards = document.querySelectorAll('.mode-option');
@@ -106,7 +108,7 @@ function initPhysicsBalls() {
   }
 }
 
-// Pastel Ball Hex Codes
+// Vibrant Pastel Ball Colors (Matched with CSS)
 function getBallPastelHex(num) {
   if (num <= 10) return '#facc15';
   if (num <= 20) return '#60a5fa';
@@ -362,13 +364,16 @@ function calculateFitnessScore(lst) {
   return parseFloat(score.toFixed(2));
 }
 
+// Generate combinations respecting manual Pins
 function generateRandSets(pool, count) {
-  const poolArray = Array.from(pool);
+  // Filter out any pinned numbers from drawing pool
+  const poolArray = Array.from(pool).filter(n => !pinnedNumbers.has(n));
   const results = [];
   while (results.length < count) {
-    const picked = [];
+    const picked = Array.from(pinnedNumbers);
     const tempPool = [...poolArray];
-    for (let i = 0; i < 6; i++) {
+    while (picked.length < 6) {
+      if (tempPool.length === 0) break;
       const idx = Math.floor(Math.random() * tempPool.length);
       picked.push(tempPool.splice(idx, 1)[0]);
     }
@@ -383,13 +388,14 @@ function generateRandSets(pool, count) {
 }
 
 function generateStatSets(pool, count, temp) {
-  const poolArray = Array.from(pool);
+  const poolArray = Array.from(pool).filter(n => !pinnedNumbers.has(n));
   const poolWeights = poolArray.map(num => adjustedWeights[num]);
   
   const candidates = [];
   for (let c = 0; c < 1000; c++) {
-    const candidate = new Set();
+    const candidate = new Set(pinnedNumbers);
     while (candidate.size < 6) {
+      if (poolArray.length === 0) break;
       candidate.add(weightedSample(poolArray, poolWeights));
     }
     candidates.push(Array.from(candidate).sort((a, b) => a - b));
@@ -445,6 +451,13 @@ function weightedIndexSample(probs) {
 
 // --- Run Simulation & Real-time Canvas exit ---
 function startSimulation() {
+  // Validate remaining pool size (must have at least 6 numbers)
+  const poolSize = 45 - excludedNumbers.size;
+  if (poolSize < 6) {
+    alert("제외수가 너무 많아 6자리 조합을 구성할 수 없습니다. 제외수를 줄여주십시오.");
+    return;
+  }
+
   isDrawing = true;
   btnGenerate.disabled = true;
   badgeStatus.classList.add('active');
@@ -472,7 +485,8 @@ function startSimulation() {
   else if (currentMode === 3) { m1 = "stat"; m2 = "rand"; }
   else if (currentMode === 4) { m1 = "rand"; m2 = "rand"; }
   
-  const pool_1 = new Set(Array.from({ length: 45 }, (_, i) => i + 1));
+  // 1차 풀: 제외수를 완전히 배제한 풀
+  const pool_1 = new Set(Array.from({ length: 45 }, (_, i) => i + 1).filter(n => !excludedNumbers.has(n)));
   let results1, scores1;
   
   if (m1 === "stat") {
@@ -487,7 +501,17 @@ function startSimulation() {
   const usedNumbers = new Set();
   results1.forEach(s => s.forEach(n => usedNumbers.add(n)));
   
-  const pool_2 = new Set([...pool_1].filter(x => !usedNumbers.has(x)));
+  // 2차 풀: 1차 추천된 번호들과 제외수를 전체 풀에서 배제
+  let pool_2 = new Set([...pool_1].filter(x => !usedNumbers.has(x)));
+  
+  // Resilient fallback: 2차 풀에 남은 개수가 6개 미만이면 사용 번호들을 도로 집어넣어 개수 충당
+  if (pool_2.size < 6) {
+    const fallbackArr = Array.from(usedNumbers);
+    while (pool_2.size < 6 && fallbackArr.length > 0) {
+      pool_2.add(fallbackArr.pop());
+    }
+  }
+  
   let results2, scores2;
   
   if (m2 === "stat") {
@@ -577,7 +601,6 @@ function renderDashboardResults(results1, scores1, usedNumbers, results2, scores
   // Donut charts & Gaussian
   updateStatsDashboard([...results1, ...results2]);
   
-  // Unhide Results Panel
   resultsPanel.classList.remove('hidden');
 }
 
@@ -661,14 +684,12 @@ function updateStatsDashboard(all10Sets) {
 
 // --- History & Big Data Persistence Layer ---
 
-// Formatting date YYYY-MM-DD HH:MM
 function getFormattedDate() {
   const d = new Date();
   const pad = (n) => n.toString().padStart(2, '0');
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-// Save ticket to local db
 function saveTicketToHistory(set, score) {
   const item = {
     id: Date.now() + Math.random(),
@@ -676,7 +697,7 @@ function saveTicketToHistory(set, score) {
     mode: MODE_DESCRIPTIONS[currentMode].name,
     set: [...set].sort((a,b)=>a-b),
     score: typeof score === 'number' ? score : null,
-    result: null // Filled on draw match checking
+    result: null
   };
   
   history.push(item);
@@ -686,7 +707,6 @@ function saveTicketToHistory(set, score) {
   updateBigDataDashboard();
 }
 
-// Load from local db
 function loadHistoryFromStorage() {
   const stored = localStorage.getItem('ados_lotto_history');
   if (stored) {
@@ -703,7 +723,6 @@ function loadHistoryFromStorage() {
   updateBigDataDashboard();
 }
 
-// Delete item
 function deleteHistoryItem(id) {
   history = history.filter(item => item.id !== id);
   localStorage.setItem('ados_lotto_history', JSON.stringify(history));
@@ -711,7 +730,6 @@ function deleteHistoryItem(id) {
   updateBigDataDashboard();
 }
 
-// Clear all history logs
 function clearHistoryAll() {
   if (confirm("정말로 확정 저장된 모든 로또 기록 대장을 비우시겠습니까? 누적 빅데이터가 초기화됩니다.")) {
     history = [];
@@ -721,7 +739,6 @@ function clearHistoryAll() {
   }
 }
 
-// Render History Panel Cards
 function renderHistoryLogs() {
   savedLogsList.innerHTML = '';
   savedLogsCount.textContent = history.length;
@@ -735,7 +752,6 @@ function renderHistoryLogs() {
     const card = document.createElement('div');
     card.className = 'log-item-card';
     
-    // Check if result has been processed
     let resultTagHtml = '';
     const hasResult = item.result !== null && item.result !== undefined;
     
@@ -776,7 +792,6 @@ function renderHistoryLogs() {
       </div>
     `;
     
-    // Attach delete trigger
     card.querySelector('.btn-delete-log').addEventListener('click', () => {
       deleteHistoryItem(item.id);
     });
@@ -785,7 +800,6 @@ function renderHistoryLogs() {
   });
 }
 
-// Calculate and render Cumulative ROI dashboard metrics
 function updateBigDataDashboard() {
   const totalGames = history.length;
   const spendAmount = totalGames * 1000;
@@ -794,11 +808,11 @@ function updateBigDataDashboard() {
   const rankCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
   
   const prizePool = {
-    1: 2000000000, // 1등 가상 20억
-    2: 50000000,   // 2등 가상 5000만
-    3: 1500000,    // 3등 150만
-    4: 50000,      // 4등 5만
-    5: 5000,       // 5등 5천
+    1: 2000000000,
+    2: 50000000,
+    3: 1500000,
+    4: 50000,
+    5: 5000,
     0: 0
   };
   
@@ -812,30 +826,23 @@ function updateBigDataDashboard() {
     }
   });
   
-  // Format numbers
   valTotalSpend.textContent = spendAmount.toLocaleString() + '원';
   valTotalWin.textContent = winAmount.toLocaleString() + '원';
   
-  // ROI%
   let roi = 0.0;
   if (spendAmount > 0) {
     roi = (winAmount / spendAmount) * 100;
   }
   valRoi.textContent = roi.toFixed(1) + '%';
   
-  // Color code ROI text based on loss or gain
   if (roi >= 100.0) {
-    valRoi.className = 'roi-val text-neon-green';
-    valRoi.style.color = '#10b981'; // Green
+    valRoi.style.color = '#10b981';
   } else if (roi > 0.0) {
-    valRoi.className = 'roi-val';
-    valRoi.style.color = '#3b82f6'; // Blue
+    valRoi.style.color = '#3b82f6';
   } else {
-    valRoi.className = 'roi-val';
-    valRoi.style.color = '#e11d48'; // Pink/Red
+    valRoi.style.color = '#e11d48';
   }
 
-  // Update Ranks graph bar filling widths
   const maxRankCount = Math.max(...Object.values(rankCounts), 1);
   for (let rank = 1; rank <= 5; rank++) {
     const count = rankCounts[rank];
@@ -844,13 +851,11 @@ function updateBigDataDashboard() {
     
     valLabel.textContent = count;
     
-    // Scale width relative to max rank count
     const widthPercent = (count / maxRankCount) * 100;
     fillBar.style.width = `${widthPercent}%`;
   }
 }
 
-// Match input numbers with saved history tickets
 function runDrawMatcher() {
   if (history.length === 0) {
     alert("대조할 저장된 로또 기록이 없습니다. 먼저 번호를 추출한 뒤 [확정 저장]을 해주십시오.");
@@ -867,7 +872,6 @@ function runDrawMatcher() {
     winningNums.push(val);
   }
   
-  // Check main uniqueness
   const uniqueWinning = new Set(winningNums);
   if (uniqueWinning.size !== 6) {
     alert("당첨 번호 6개는 중복될 수 없습니다.");
@@ -884,13 +888,12 @@ function runDrawMatcher() {
     return;
   }
   
-  // Perform match rank lookup
   history.forEach(item => {
     const mainMatches = item.set.filter(n => winningNums.includes(n));
     const matchCount = mainMatches.length;
     const bonusMatch = item.set.includes(bonusNum);
     
-    let rank = 0; // default lose
+    let rank = 0;
     
     if (matchCount === 6) {
       rank = 1;
@@ -910,14 +913,11 @@ function runDrawMatcher() {
     };
   });
   
-  // Save updated history back to storage
   localStorage.setItem('ados_lotto_history', JSON.stringify(history));
   
-  // Re-render
   renderHistoryLogs();
   updateBigDataDashboard();
   
-  // Scroll to History logs
   document.getElementById('history-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -971,13 +971,11 @@ async function fetchLatestLottoNumbers() {
   try {
     let data = await tryFetchDraw(targetDraw);
     if (!data || data.returnValue === "fail") {
-      // Fallback to previous week if current week's draw has not occurred yet
       targetDraw -= 1;
       data = await tryFetchDraw(targetDraw);
     }
     
     if (data && data.returnValue === "success") {
-      // Populate match input fields
       document.getElementById('m-num-1').value = data.drwtNo1;
       document.getElementById('m-num-2').value = data.drwtNo2;
       document.getElementById('m-num-3').value = data.drwtNo3;
@@ -989,7 +987,6 @@ async function fetchLatestLottoNumbers() {
       lbl.textContent = targetDraw;
       btn.textContent = "로드 완료 ✓";
       
-      // Auto trigger verification
       runDrawMatcher();
     } else {
       alert("공식 당첨 번호를 로드하지 못했습니다. 번호를 수동으로 입력해 주십시오.");
@@ -1004,10 +1001,54 @@ async function fetchLatestLottoNumbers() {
   }
 }
 
+// --- Pinned / Excluded UI Marking Board Initialization ---
+function initMarkingBoard() {
+  const grid = document.getElementById('marking-board-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  
+  for (let i = 1; i <= 45; i++) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'marking-btn';
+    btn.textContent = i;
+    
+    btn.addEventListener('click', () => {
+      if (isDrawing) return;
+      
+      // Cycle: Default -> Pinned -> Excluded -> Default
+      if (!pinnedNumbers.has(i) && !excludedNumbers.has(i)) {
+        if (pinnedNumbers.size < 5) {
+          pinnedNumbers.add(i);
+          btn.className = 'marking-btn pinned';
+          badgeText.textContent = `고정수 추가: ${i}번`;
+        } else {
+          // If pins are full, go straight to Exclude
+          excludedNumbers.add(i);
+          btn.className = 'marking-btn excluded';
+          badgeText.textContent = `제외수 추가: ${i}번`;
+        }
+      } else if (pinnedNumbers.has(i)) {
+        pinnedNumbers.delete(i);
+        excludedNumbers.add(i);
+        btn.className = 'marking-btn excluded';
+        badgeText.textContent = `제외수로 전환: ${i}번`;
+      } else if (excludedNumbers.has(i)) {
+        excludedNumbers.delete(i);
+        btn.className = 'marking-btn';
+        badgeText.textContent = `필터 해제: ${i}번`;
+      }
+    });
+    
+    grid.appendChild(btn);
+  }
+}
+
 // --- Attach History Control Handlers ---
 btnClearHistory.addEventListener('click', clearHistoryAll);
 btnRunMatch.addEventListener('click', runDrawMatcher);
 document.getElementById('btn-fetch-latest').addEventListener('click', fetchLatestLottoNumbers);
 
-// Load previous storage logs upon initial page loads
+// Initialize Marking Board & Load Storage
+initMarkingBoard();
 loadHistoryFromStorage();
