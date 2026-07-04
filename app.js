@@ -26,16 +26,16 @@ const MODE_DESCRIPTIONS = {
 
 // 100% Reliable Offline Fallback Data
 const FALLBACK_LATEST_DRAW = {
-  drwNo: 1229,
+  drwNo: 1230,
   drwNoDate: "2026-06-27",
-  drwtNo1: 1,
-  drwtNo2: 5,
-  drwtNo3: 12,
-  drwtNo4: 19,
-  drwtNo5: 23,
-  drwtNo6: 44,
-  bnusNo: 35,
-  firstWinamnt: 1850000000,
+  drwtNo1: 3,
+  drwtNo2: 8,
+  drwtNo3: 9,
+  drwtNo4: 22,
+  drwtNo5: 28,
+  drwtNo6: 42,
+  bnusNo: 45,
+  firstWinamnt: 1771350000,
   returnValue: "success"
 };
 
@@ -195,8 +195,8 @@ const HISTORICAL_DRAWS = [
   {drwNo:1225,drwNoDate:"2026-05-23",numbers:[8, 9, 19, 25, 41, 42],bnusNo:33},
   {drwNo:1226,drwNoDate:"2026-05-30",numbers:[4, 6, 13, 17, 26, 28],bnusNo:41},
   {drwNo:1227,drwNoDate:"2026-06-06",numbers:[1, 14, 16, 34, 41, 44],bnusNo:13},
-  {drwNo:1228,drwNoDate:"2026-06-13",numbers:[24, 29, 30, 31, 35, 44],bnusNo:1},
-  {drwNo:1229,drwNoDate:"2026-06-20",numbers:[12, 13, 29, 34, 37, 42],bnusNo:16}
+  {drwNo:1229,drwNoDate:"2026-06-20",numbers:[12, 13, 29, 34, 37, 42],bnusNo:16},
+  {drwNo:1230,drwNoDate:"2026-06-27",numbers:[3, 8, 9, 22, 28, 42],bnusNo:45}
 ];
 
 let activePeriod = '3yr';
