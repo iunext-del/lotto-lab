@@ -91,6 +91,14 @@
               <option value="2.0">T = 2.0 (Diverse)</option>
             </select>
           </div>
+          <div class="param-item">
+            <label for="input-period">분석 통계 기간</label>
+            <select id="input-period" class="select-box">
+              <option value="all" selected>역대 전체 누적</option>
+              <option value="3yr">최근 3개년 (156회)</option>
+              <option value="1yr">최근 1개년 (52회)</option>
+            </select>
+          </div>
         </div>
 
         <!-- Number Filter Marking Board -->
@@ -207,7 +215,12 @@
           <section id="history-panel" class="panel glass-panel history-dashboard-container" aria-labelledby="title-history">
             <div class="history-dashboard-header">
               <h2 id="title-history" class="results-main-title">나의 로또 저장대장 및 빅데이터 복기판</h2>
-              <button id="btn-clear-history" class="text-btn-alert" type="button">기록 전체 초기화</button>
+              <div class="history-actions-flex">
+                <button id="btn-export-history" class="text-btn-backup" type="button">대장 백업 📥</button>
+                <button id="btn-import-history" class="text-btn-backup" type="button">대장 복원 📤</button>
+                <input type="file" id="file-import-history" class="hidden" accept=".json">
+                <button id="btn-clear-history" class="text-btn-alert" type="button">기록 전체 초기화</button>
+              </div>
             </div>
 
             <!-- ROI and stats overview row -->

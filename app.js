@@ -39,6 +39,197 @@ const FALLBACK_LATEST_DRAW = {
   returnValue: "success"
 };
 
+// 3-Year Historical Draws database for dynamic frequency modeling
+const HISTORICAL_DRAWS = [
+  {drwNo:1074,drwNoDate:"2023-07-01",numbers:[1, 6, 20, 27, 28, 41],bnusNo:15},
+  {drwNo:1075,drwNoDate:"2023-07-08",numbers:[1, 23, 24, 35, 44, 45],bnusNo:10},
+  {drwNo:1076,drwNoDate:"2023-07-15",numbers:[3, 7, 9, 33, 36, 37],bnusNo:10},
+  {drwNo:1077,drwNoDate:"2023-07-22",numbers:[4, 8, 17, 30, 40, 43],bnusNo:34},
+  {drwNo:1078,drwNoDate:"2023-07-29",numbers:[6, 10, 11, 14, 36, 38],bnusNo:43},
+  {drwNo:1079,drwNoDate:"2023-08-05",numbers:[4, 8, 18, 24, 37, 45],bnusNo:6},
+  {drwNo:1080,drwNoDate:"2023-08-12",numbers:[13, 16, 23, 31, 36, 44],bnusNo:38},
+  {drwNo:1081,drwNoDate:"2023-08-19",numbers:[1, 9, 16, 23, 24, 38],bnusNo:17},
+  {drwNo:1082,drwNoDate:"2023-08-26",numbers:[21, 26, 27, 32, 34, 42],bnusNo:31},
+  {drwNo:1083,drwNoDate:"2023-09-02",numbers:[3, 7, 14, 15, 22, 38],bnusNo:17},
+  {drwNo:1084,drwNoDate:"2023-09-09",numbers:[8, 12, 13, 29, 33, 42],bnusNo:5},
+  {drwNo:1085,drwNoDate:"2023-09-16",numbers:[4, 7, 17, 18, 38, 44],bnusNo:36},
+  {drwNo:1086,drwNoDate:"2023-09-23",numbers:[11, 16, 25, 27, 35, 36],bnusNo:37},
+  {drwNo:1087,drwNoDate:"2023-09-30",numbers:[13, 14, 18, 21, 34, 44],bnusNo:16},
+  {drwNo:1088,drwNoDate:"2023-10-07",numbers:[11, 21, 22, 30, 39, 44],bnusNo:31},
+  {drwNo:1089,drwNoDate:"2023-10-14",numbers:[4, 18, 31, 37, 42, 43],bnusNo:40},
+  {drwNo:1090,drwNoDate:"2023-10-21",numbers:[12, 19, 21, 29, 40, 45],bnusNo:1},
+  {drwNo:1091,drwNoDate:"2023-10-28",numbers:[6, 20, 23, 24, 28, 30],bnusNo:44},
+  {drwNo:1092,drwNoDate:"2023-11-04",numbers:[7, 18, 19, 26, 33, 45],bnusNo:37},
+  {drwNo:1093,drwNoDate:"2023-11-11",numbers:[10, 17, 22, 30, 35, 43],bnusNo:44},
+  {drwNo:1094,drwNoDate:"2023-11-18",numbers:[6, 7, 15, 22, 26, 40],bnusNo:41},
+  {drwNo:1095,drwNoDate:"2023-11-25",numbers:[8, 14, 28, 29, 34, 40],bnusNo:12},
+  {drwNo:1096,drwNoDate:"2023-12-02",numbers:[1, 12, 16, 19, 23, 43],bnusNo:34},
+  {drwNo:1097,drwNoDate:"2023-12-09",numbers:[14, 33, 34, 35, 37, 40],bnusNo:4},
+  {drwNo:1098,drwNoDate:"2023-12-16",numbers:[12, 16, 21, 24, 41, 43],bnusNo:15},
+  {drwNo:1099,drwNoDate:"2023-12-23",numbers:[3, 20, 28, 38, 40, 43],bnusNo:4},
+  {drwNo:1100,drwNoDate:"2023-12-30",numbers:[17, 26, 29, 30, 31, 43],bnusNo:12},
+  {drwNo:1101,drwNoDate:"2024-01-06",numbers:[6, 7, 13, 28, 36, 42],bnusNo:41},
+  {drwNo:1102,drwNoDate:"2024-01-13",numbers:[13, 14, 22, 26, 37, 38],bnusNo:20},
+  {drwNo:1103,drwNoDate:"2024-01-20",numbers:[10, 12, 29, 31, 40, 44],bnusNo:2},
+  {drwNo:1104,drwNoDate:"2024-01-27",numbers:[1, 7, 21, 30, 35, 38],bnusNo:2},
+  {drwNo:1105,drwNoDate:"2024-02-03",numbers:[6, 16, 34, 37, 39, 40],bnusNo:11},
+  {drwNo:1106,drwNoDate:"2024-02-10",numbers:[1, 3, 4, 29, 42, 45],bnusNo:36},
+  {drwNo:1107,drwNoDate:"2024-02-17",numbers:[6, 14, 30, 31, 40, 41],bnusNo:29},
+  {drwNo:1108,drwNoDate:"2024-02-24",numbers:[7, 19, 26, 37, 39, 44],bnusNo:27},
+  {drwNo:1109,drwNoDate:"2024-03-02",numbers:[10, 12, 13, 19, 33, 40],bnusNo:2},
+  {drwNo:1110,drwNoDate:"2024-03-09",numbers:[3, 7, 11, 20, 22, 41],bnusNo:24},
+  {drwNo:1111,drwNoDate:"2024-03-16",numbers:[3, 13, 30, 33, 43, 45],bnusNo:4},
+  {drwNo:1112,drwNoDate:"2024-03-23",numbers:[16, 20, 26, 36, 42, 44],bnusNo:24},
+  {drwNo:1113,drwNoDate:"2024-03-30",numbers:[11, 13, 20, 21, 32, 44],bnusNo:8},
+  {drwNo:1114,drwNoDate:"2024-04-06",numbers:[10, 16, 19, 32, 33, 38],bnusNo:3},
+  {drwNo:1115,drwNoDate:"2024-04-13",numbers:[7, 12, 23, 32, 34, 36],bnusNo:8},
+  {drwNo:1116,drwNoDate:"2024-04-20",numbers:[15, 16, 17, 25, 30, 31],bnusNo:32},
+  {drwNo:1117,drwNoDate:"2024-04-27",numbers:[3, 4, 9, 30, 33, 36],bnusNo:7},
+  {drwNo:1118,drwNoDate:"2024-05-04",numbers:[11, 13, 14, 15, 16, 45],bnusNo:3},
+  {drwNo:1119,drwNoDate:"2024-05-11",numbers:[1, 9, 12, 13, 20, 45],bnusNo:3},
+  {drwNo:1120,drwNoDate:"2024-05-18",numbers:[2, 19, 26, 31, 38, 41],bnusNo:34},
+  {drwNo:1121,drwNoDate:"2024-05-25",numbers:[6, 24, 31, 32, 38, 44],bnusNo:8},
+  {drwNo:1122,drwNoDate:"2024-06-01",numbers:[3, 6, 21, 30, 34, 35],bnusNo:22},
+  {drwNo:1123,drwNoDate:"2024-06-08",numbers:[13, 19, 21, 24, 34, 35],bnusNo:26},
+  {drwNo:1124,drwNoDate:"2024-06-15",numbers:[3, 8, 17, 30, 33, 34],bnusNo:28},
+  {drwNo:1125,drwNoDate:"2024-06-22",numbers:[6, 14, 25, 33, 40, 44],bnusNo:30},
+  {drwNo:1126,drwNoDate:"2024-06-29",numbers:[4, 5, 9, 11, 37, 40],bnusNo:7},
+  {drwNo:1127,drwNoDate:"2024-07-06",numbers:[10, 15, 24, 30, 31, 37],bnusNo:32},
+  {drwNo:1128,drwNoDate:"2024-07-13",numbers:[1, 5, 8, 16, 28, 33],bnusNo:45},
+  {drwNo:1129,drwNoDate:"2024-07-20",numbers:[5, 10, 11, 17, 28, 34],bnusNo:22},
+  {drwNo:1130,drwNoDate:"2024-07-27",numbers:[15, 19, 21, 25, 27, 28],bnusNo:40},
+  {drwNo:1131,drwNoDate:"2024-08-03",numbers:[1, 2, 6, 14, 27, 38],bnusNo:33},
+  {drwNo:1132,drwNoDate:"2024-08-10",numbers:[6, 7, 19, 28, 34, 41],bnusNo:5},
+  {drwNo:1133,drwNoDate:"2024-08-17",numbers:[13, 14, 20, 28, 29, 34],bnusNo:23},
+  {drwNo:1134,drwNoDate:"2024-08-24",numbers:[3, 7, 9, 13, 19, 24],bnusNo:23},
+  {drwNo:1135,drwNoDate:"2024-08-31",numbers:[1, 6, 13, 19, 21, 33],bnusNo:4},
+  {drwNo:1136,drwNoDate:"2024-09-07",numbers:[21, 33, 35, 38, 42, 44],bnusNo:1},
+  {drwNo:1137,drwNoDate:"2024-09-14",numbers:[4, 9, 12, 15, 33, 45],bnusNo:26},
+  {drwNo:1138,drwNoDate:"2024-09-21",numbers:[14, 16, 19, 20, 29, 34],bnusNo:35},
+  {drwNo:1139,drwNoDate:"2024-09-28",numbers:[5, 12, 15, 30, 37, 40],bnusNo:18},
+  {drwNo:1140,drwNoDate:"2024-10-05",numbers:[7, 10, 22, 29, 31, 38],bnusNo:15},
+  {drwNo:1141,drwNoDate:"2024-10-12",numbers:[7, 11, 12, 21, 26, 35],bnusNo:20},
+  {drwNo:1142,drwNoDate:"2024-10-19",numbers:[2, 8, 28, 30, 37, 41],bnusNo:22},
+  {drwNo:1143,drwNoDate:"2024-10-26",numbers:[10, 16, 17, 27, 28, 36],bnusNo:6},
+  {drwNo:1144,drwNoDate:"2024-11-02",numbers:[3, 4, 12, 15, 26, 34],bnusNo:6},
+  {drwNo:1145,drwNoDate:"2024-11-09",numbers:[2, 11, 31, 33, 37, 44],bnusNo:32},
+  {drwNo:1146,drwNoDate:"2024-11-16",numbers:[6, 11, 17, 19, 40, 43],bnusNo:28},
+  {drwNo:1147,drwNoDate:"2024-11-23",numbers:[7, 11, 24, 26, 27, 37],bnusNo:32},
+  {drwNo:1148,drwNoDate:"2024-11-30",numbers:[3, 6, 13, 15, 16, 22],bnusNo:32},
+  {drwNo:1149,drwNoDate:"2024-12-07",numbers:[8, 15, 19, 21, 32, 36],bnusNo:38},
+  {drwNo:1150,drwNoDate:"2024-12-14",numbers:[8, 9, 18, 35, 39, 45],bnusNo:25},
+  {drwNo:1151,drwNoDate:"2024-12-21",numbers:[2, 3, 9, 15, 27, 29],bnusNo:8},
+  {drwNo:1152,drwNoDate:"2024-12-28",numbers:[30, 31, 32, 35, 36, 37],bnusNo:5},
+  {drwNo:1153,drwNoDate:"2025-01-04",numbers:[1, 9, 10, 13, 35, 44],bnusNo:5},
+  {drwNo:1154,drwNoDate:"2025-01-11",numbers:[4, 8, 22, 26, 32, 38],bnusNo:27},
+  {drwNo:1155,drwNoDate:"2025-01-18",numbers:[10, 16, 19, 27, 37, 38],bnusNo:13},
+  {drwNo:1156,drwNoDate:"2025-01-25",numbers:[30, 31, 34, 39, 41, 45],bnusNo:7},
+  {drwNo:1157,drwNoDate:"2025-02-01",numbers:[5, 7, 12, 20, 25, 26],bnusNo:28},
+  {drwNo:1158,drwNoDate:"2025-02-08",numbers:[21, 25, 27, 32, 37, 38],bnusNo:20},
+  {drwNo:1159,drwNoDate:"2025-02-15",numbers:[3, 9, 27, 28, 38, 39],bnusNo:7},
+  {drwNo:1160,drwNoDate:"2025-02-22",numbers:[7, 13, 18, 36, 39, 45],bnusNo:19},
+  {drwNo:1161,drwNoDate:"2025-03-01",numbers:[2, 12, 20, 24, 34, 42],bnusNo:37},
+  {drwNo:1162,drwNoDate:"2025-03-08",numbers:[20, 21, 22, 25, 28, 29],bnusNo:6},
+  {drwNo:1163,drwNoDate:"2025-03-15",numbers:[2, 13, 15, 16, 33, 43],bnusNo:4},
+  {drwNo:1164,drwNoDate:"2025-03-22",numbers:[17, 18, 23, 25, 38, 39],bnusNo:22},
+  {drwNo:1165,drwNoDate:"2025-03-29",numbers:[6, 7, 27, 29, 38, 45],bnusNo:17},
+  {drwNo:1166,drwNoDate:"2025-04-05",numbers:[14, 23, 25, 27, 29, 42],bnusNo:16},
+  {drwNo:1167,drwNoDate:"2025-04-12",numbers:[8, 23, 31, 35, 39, 40],bnusNo:24},
+  {drwNo:1168,drwNoDate:"2025-04-19",numbers:[9, 21, 24, 30, 33, 37],bnusNo:29},
+  {drwNo:1169,drwNoDate:"2025-04-26",numbers:[5, 12, 24, 26, 39, 42],bnusNo:20},
+  {drwNo:1170,drwNoDate:"2025-05-03",numbers:[3, 13, 28, 34, 38, 42],bnusNo:25},
+  {drwNo:1171,drwNoDate:"2025-05-10",numbers:[3, 6, 7, 11, 12, 17],bnusNo:19},
+  {drwNo:1172,drwNoDate:"2025-05-17",numbers:[7, 9, 24, 40, 42, 44],bnusNo:45},
+  {drwNo:1173,drwNoDate:"2025-05-24",numbers:[1, 5, 18, 20, 30, 35],bnusNo:3},
+  {drwNo:1174,drwNoDate:"2025-05-31",numbers:[8, 11, 14, 17, 36, 39],bnusNo:22},
+  {drwNo:1175,drwNoDate:"2025-06-07",numbers:[3, 4, 6, 8, 32, 42],bnusNo:31},
+  {drwNo:1176,drwNoDate:"2025-06-14",numbers:[7, 9, 11, 21, 30, 35],bnusNo:29},
+  {drwNo:1177,drwNoDate:"2025-06-21",numbers:[3, 7, 15, 16, 19, 43],bnusNo:21},
+  {drwNo:1178,drwNoDate:"2025-06-28",numbers:[5, 6, 11, 27, 43, 44],bnusNo:17},
+  {drwNo:1179,drwNoDate:"2025-07-05",numbers:[3, 16, 18, 24, 40, 44],bnusNo:21},
+  {drwNo:1180,drwNoDate:"2025-07-12",numbers:[6, 12, 18, 37, 40, 41],bnusNo:3},
+  {drwNo:1181,drwNoDate:"2025-07-19",numbers:[8, 10, 14, 20, 33, 41],bnusNo:28},
+  {drwNo:1182,drwNoDate:"2025-07-26",numbers:[1, 13, 21, 25, 28, 31],bnusNo:22},
+  {drwNo:1183,drwNoDate:"2025-08-02",numbers:[4, 15, 17, 23, 27, 36],bnusNo:31},
+  {drwNo:1184,drwNoDate:"2025-08-09",numbers:[14, 16, 23, 25, 31, 37],bnusNo:42},
+  {drwNo:1185,drwNoDate:"2025-08-16",numbers:[6, 17, 22, 28, 29, 32],bnusNo:38},
+  {drwNo:1186,drwNoDate:"2025-08-23",numbers:[2, 8, 13, 16, 23, 28],bnusNo:35},
+  {drwNo:1187,drwNoDate:"2025-08-30",numbers:[5, 13, 26, 29, 37, 40],bnusNo:42},
+  {drwNo:1188,drwNoDate:"2025-09-06",numbers:[3, 4, 12, 19, 22, 27],bnusNo:9},
+  {drwNo:1189,drwNoDate:"2025-09-13",numbers:[9, 19, 29, 35, 37, 38],bnusNo:31},
+  {drwNo:1190,drwNoDate:"2025-09-20",numbers:[7, 9, 19, 23, 26, 45],bnusNo:33},
+  {drwNo:1191,drwNoDate:"2025-09-27",numbers:[1, 4, 11, 12, 20, 41],bnusNo:2},
+  {drwNo:1192,drwNoDate:"2025-10-04",numbers:[10, 16, 23, 36, 39, 40],bnusNo:11},
+  {drwNo:1193,drwNoDate:"2025-10-11",numbers:[6, 9, 16, 19, 24, 28],bnusNo:17},
+  {drwNo:1194,drwNoDate:"2025-10-18",numbers:[3, 13, 15, 24, 33, 37],bnusNo:2},
+  {drwNo:1195,drwNoDate:"2025-10-25",numbers:[3, 15, 27, 33, 34, 36],bnusNo:37},
+  {drwNo:1196,drwNoDate:"2025-11-01",numbers:[8, 12, 15, 29, 40, 45],bnusNo:14},
+  {drwNo:1197,drwNoDate:"2025-11-08",numbers:[1, 5, 7, 26, 28, 43],bnusNo:30},
+  {drwNo:1198,drwNoDate:"2025-11-15",numbers:[26, 30, 33, 38, 39, 41],bnusNo:21},
+  {drwNo:1199,drwNoDate:"2025-11-22",numbers:[16, 24, 25, 30, 31, 32],bnusNo:7},
+  {drwNo:1200,drwNoDate:"2025-11-29",numbers:[1, 2, 4, 16, 20, 32],bnusNo:45},
+  {drwNo:1201,drwNoDate:"2025-12-06",numbers:[7, 9, 24, 27, 35, 36],bnusNo:37},
+  {drwNo:1202,drwNoDate:"2025-12-13",numbers:[5, 12, 21, 33, 37, 40],bnusNo:7},
+  {drwNo:1203,drwNoDate:"2025-12-20",numbers:[3, 6, 18, 29, 35, 39],bnusNo:24},
+  {drwNo:1204,drwNoDate:"2025-12-27",numbers:[8, 16, 28, 30, 31, 44],bnusNo:27},
+  {drwNo:1205,drwNoDate:"2026-01-03",numbers:[1, 4, 16, 23, 31, 41],bnusNo:2},
+  {drwNo:1206,drwNoDate:"2026-01-10",numbers:[1, 3, 17, 26, 27, 42],bnusNo:23},
+  {drwNo:1207,drwNoDate:"2026-01-17",numbers:[10, 22, 24, 27, 38, 45],bnusNo:11},
+  {drwNo:1208,drwNoDate:"2026-01-24",numbers:[6, 27, 30, 36, 38, 42],bnusNo:25},
+  {drwNo:1209,drwNoDate:"2026-01-31",numbers:[2, 17, 20, 35, 37, 39],bnusNo:24},
+  {drwNo:1210,drwNoDate:"2026-02-07",numbers:[1, 7, 9, 17, 27, 38],bnusNo:31},
+  {drwNo:1211,drwNoDate:"2026-02-14",numbers:[23, 26, 27, 35, 38, 40],bnusNo:10},
+  {drwNo:1212,drwNoDate:"2026-02-21",numbers:[5, 8, 25, 31, 41, 44],bnusNo:45},
+  {drwNo:1213,drwNoDate:"2026-02-28",numbers:[5, 11, 25, 27, 36, 38],bnusNo:2},
+  {drwNo:1214,drwNoDate:"2026-03-07",numbers:[10, 15, 19, 27, 30, 33],bnusNo:14},
+  {drwNo:1215,drwNoDate:"2026-03-14",numbers:[13, 15, 19, 21, 44, 45],bnusNo:39},
+  {drwNo:1216,drwNoDate:"2026-03-21",numbers:[3, 10, 14, 15, 23, 24],bnusNo:25},
+  {drwNo:1217,drwNoDate:"2026-03-28",numbers:[8, 10, 15, 20, 29, 31],bnusNo:41},
+  {drwNo:1218,drwNoDate:"2026-04-04",numbers:[3, 28, 31, 32, 42, 45],bnusNo:25},
+  {drwNo:1219,drwNoDate:"2026-04-11",numbers:[1, 2, 15, 28, 39, 45],bnusNo:31},
+  {drwNo:1220,drwNoDate:"2026-04-18",numbers:[2, 22, 25, 28, 34, 43],bnusNo:16},
+  {drwNo:1221,drwNoDate:"2026-04-25",numbers:[6, 13, 18, 28, 30, 36],bnusNo:9},
+  {drwNo:1222,drwNoDate:"2026-05-02",numbers:[4, 11, 17, 22, 32, 41],bnusNo:34},
+  {drwNo:1223,drwNoDate:"2026-05-09",numbers:[16, 18, 20, 32, 33, 39],bnusNo:26},
+  {drwNo:1224,drwNoDate:"2026-05-16",numbers:[9, 18, 21, 27, 44, 45],bnusNo:28},
+  {drwNo:1225,drwNoDate:"2026-05-23",numbers:[8, 9, 19, 25, 41, 42],bnusNo:33},
+  {drwNo:1226,drwNoDate:"2026-05-30",numbers:[4, 6, 13, 17, 26, 28],bnusNo:41},
+  {drwNo:1227,drwNoDate:"2026-06-06",numbers:[1, 14, 16, 34, 41, 44],bnusNo:13},
+  {drwNo:1228,drwNoDate:"2026-06-13",numbers:[24, 29, 30, 31, 35, 44],bnusNo:1},
+  {drwNo:1229,drwNoDate:"2026-06-20",numbers:[12, 13, 29, 34, 37, 42],bnusNo:16}
+];
+
+let activePeriod = 'all';
+let currentWeights = { ...adjustedWeights };
+
+function updateActiveWeights() {
+  const weights = {};
+  for (let i = 1; i <= 45; i++) {
+    weights[i] = 1;
+  }
+  
+  if (activePeriod === 'all') {
+    for (let i = 1; i <= 45; i++) {
+      weights[i] = FREQUENCY_SCORES[i] || 1;
+    }
+    COLD_NUMBERS.forEach(num => {
+      weights[num] += 2;
+    });
+    currentWeights = weights;
+    return;
+  }
+  
+  const count = activePeriod === '1yr' ? 52 : 156;
+  const slice = HISTORICAL_DRAWS.slice(-count);
+  slice.forEach(draw => {
+    draw.numbers.forEach(num => {
+      weights[num] += 1.5; // Scale dynamic count to make variations distinct
+    });
+  });
+  
+  currentWeights = weights;
+}
+
 // --- State Variables ---
 let currentMode = 1;
 let isDrawing = false;
@@ -72,6 +263,11 @@ const valTotalSpend = document.getElementById('val-total-spend');
 const valTotalWin = document.getElementById('val-total-win');
 const valRoi = document.getElementById('val-roi');
 
+const selectPeriod = document.getElementById('input-period');
+const btnExportHistory = document.getElementById('btn-export-history');
+const btnImportHistory = document.getElementById('btn-import-history');
+const fileImportHistory = document.getElementById('file-import-history');
+
 const rank1Fill = document.getElementById('rank-1-fill');
 const rank2Fill = document.getElementById('rank-2-fill');
 const rank3Fill = document.getElementById('rank-3-fill');
@@ -87,6 +283,14 @@ const rank5Val = document.getElementById('rank-5-val');
 // --- Canvas Physics Engine Setup ---
 const canvas = document.getElementById('lotto-canvas');
 const ctx = canvas.getContext('2d');
+
+const dpr = window.devicePixelRatio || 1;
+canvas.width = 220 * dpr;
+canvas.height = 220 * dpr;
+canvas.style.width = '220px';
+canvas.style.height = '220px';
+ctx.scale(dpr, dpr);
+
 const cx = 110;
 const cy = 110;
 const cageRadius = 92;
@@ -145,8 +349,14 @@ function getBallColorClass(num) {
 }
 
 // 2D Physics Loop
-function updatePhysics() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+let lastTime = performance.now();
+
+function updatePhysics(now = performance.now()) {
+  ctx.clearRect(0, 0, 220, 220);
+  
+  // Calculate normalized delta time (16.667ms = 1.0)
+  const dt = Math.min((now - lastTime) / 16.667, 2.0);
+  lastTime = now;
   
   // 1. Draw outer transparent cage border
   ctx.beginPath();
@@ -166,7 +376,7 @@ function updatePhysics() {
   // 2. Physics Update & Draw Balls
   balls.forEach((ball, idx) => {
     if (ball.exiting) {
-      ball.exitProgress += 0.05;
+      ball.exitProgress += 0.05 * dt;
       ball.x = cx;
       ball.y = cy + cageRadius + (ball.exitProgress * 25);
       
@@ -187,26 +397,36 @@ function updatePhysics() {
     if (isSpinning) {
       const dx = ball.x - cx;
       const dy = ball.y - cy;
-      const dist = Math.sqrt(dx*dx + dy*dy);
+      const dist = Math.sqrt(dx*dx + dy*dy) || 1;
       
-      if (dist > 0) {
-        const tx = -dy / dist;
-        const ty = dx / dist;
-        ball.vx += tx * 0.85 + (Math.random() - 0.5) * 0.5;
-        ball.vy += ty * 0.85 + (Math.random() - 0.5) * 0.5;
-        
-        ball.vx += (dx / dist) * 0.15;
-        ball.vy += (dy / dist) * 0.15;
-      }
+      const tx = -dy / dist;
+      const ty = dx / dist;
+      
+      const targetSpeed = 4.5;
+      const currentTangentialV = ball.vx * tx + ball.vy * ty;
+      const steer = (targetSpeed - currentTangentialV) * 0.08;
+      
+      ball.vx += tx * steer * dt;
+      ball.vy += ty * steer * dt;
+      
+      // Slight inward attraction
+      ball.vx -= (dx / dist) * 0.08 * dt;
+      ball.vy -= (dy / dist) * 0.08 * dt;
+      
+      // Micro turbulence
+      ball.vx += (Math.random() - 0.5) * 0.3 * dt;
+      ball.vy += (Math.random() - 0.5) * 0.3 * dt;
     } else {
-      ball.vy += gravity;
+      ball.vy += gravity * dt;
     }
     
-    ball.vx *= 0.985;
-    ball.vy *= 0.985;
+    // Scale friction with dt
+    const friction = Math.pow(0.985, dt);
+    ball.vx *= friction;
+    ball.vy *= friction;
     
-    ball.x += ball.vx;
-    ball.y += ball.vy;
+    ball.x += ball.vx * dt;
+    ball.y += ball.vy * dt;
     
     const dx = ball.x - cx;
     const dy = ball.y - cy;
@@ -220,8 +440,10 @@ function updatePhysics() {
       ball.y = cy - ny * (cageRadius - ball.r);
       
       const dot = ball.vx * nx + ball.vy * ny;
-      ball.vx = (ball.vx - 2 * dot * nx) * restitution;
-      ball.vy = (ball.vy - 2 * dot * ny) * restitution;
+      if (dot < 0) {
+        ball.vx = (ball.vx - 2 * dot * nx) * restitution;
+        ball.vy = (ball.vy - 2 * dot * ny) * restitution;
+      }
     }
     
     for (let j = idx + 1; j < balls.length; j++) {
@@ -266,7 +488,7 @@ function updatePhysics() {
     ctx.stroke();
     
     ctx.fillStyle = ball.textHex;
-    ctx.font = 'bold 7px var(--font-primary)';
+    ctx.font = 'bold 7px Inter, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(ball.num.toString(), ball.x, ball.y + 0.3);
@@ -317,7 +539,10 @@ function calculateFitnessScore(lst) {
   else score += -10;
   
   const totalSum = lst.reduce((a, b) => a + b, 0);
-  const sumScore = Math.exp(-Math.pow(totalSum - 138.0, 2) / (2 * Math.pow(32.0, 2))) * 10;
+  const z = (totalSum - 138.0) / 32.0;
+  // 표준 정규 분포(Standard Normal Distribution) z-score 정규화 점수 매핑
+  const pdf = Math.exp(-0.5 * z * z) / Math.sqrt(2 * Math.PI);
+  const sumScore = (pdf / 0.3989422804014327) * 10.0;
   score += sumScore;
   
   const diffs = new Set();
@@ -403,7 +628,7 @@ function generateRandSets(pool, count) {
 
 function generateStatSets(pool, count, temp) {
   const poolArray = Array.from(pool).filter(n => !pinnedNumbers.has(n));
-  const poolWeights = poolArray.map(num => adjustedWeights[num]);
+  const poolWeights = poolArray.map(num => currentWeights[num]);
   
   const candidates = [];
   for (let c = 0; c < 1000; c++) {
@@ -1109,6 +1334,64 @@ function initMarkingBoard() {
 btnClearHistory.addEventListener('click', clearHistoryAll);
 btnRunMatch.addEventListener('click', runDrawMatcher);
 document.getElementById('btn-fetch-latest').addEventListener('click', fetchLatestLottoNumbers);
+
+// Period Selection Change
+selectPeriod.addEventListener('change', () => {
+  activePeriod = selectPeriod.value;
+  updateActiveWeights();
+  badgeText.textContent = `분석 통계 기간 변경: ${selectPeriod.options[selectPeriod.selectedIndex].text}`;
+});
+
+// Export Backup (JSON)
+btnExportHistory.addEventListener('click', () => {
+  if (history.length === 0) {
+    alert("백업할 대장 기록이 없습니다.");
+    return;
+  }
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(history));
+  const dlAnchorElem = document.createElement('a');
+  dlAnchorElem.setAttribute("href", dataStr);
+  dlAnchorElem.setAttribute("download", `lotto_ledger_backup_${new Date().toISOString().slice(0,10)}.json`);
+  dlAnchorElem.click();
+  badgeText.textContent = "로또 대장 백업 성공 📥";
+});
+
+// Import Backup (JSON)
+btnImportHistory.addEventListener('click', () => {
+  fileImportHistory.click();
+});
+
+fileImportHistory.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    try {
+      const parsed = JSON.parse(event.target.result);
+      if (Array.isArray(parsed)) {
+        // Validate records structure
+        const valid = parsed.every(item => Array.isArray(item.numbers) && typeof item.mode === 'number');
+        if (valid) {
+          history = parsed;
+          localStorage.setItem('ados_lotto_history', JSON.stringify(history));
+          renderHistoryLogs();
+          updateBigDataDashboard();
+          badgeText.textContent = "로또 대장 복원 성공 📤";
+          alert(`로또 대장 복원 완료! 총 ${history.length}개의 게임이 복원되었습니다.`);
+        } else {
+          alert("올바르지 않은 백업 파일 형식입니다.");
+        }
+      } else {
+        alert("올바르지 않은 백업 파일입니다.");
+      }
+    } catch (err) {
+      alert("파일 읽기 오류 또는 손상된 파일입니다.");
+    }
+  };
+  reader.readAsText(file);
+  fileImportHistory.value = ''; // clear input
+});
 
 // Initialize Marking Board, Load Storage, and Auto Fetch Actual Draw Info on Page Load
 initMarkingBoard();

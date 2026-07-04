@@ -284,7 +284,7 @@ body {
 /* --- Parameters Grid --- */
 .parameter-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 }
 
@@ -1347,5 +1347,28 @@ body {
   font-weight: 600;
   color: var(--text-light);
   box-shadow: 0 2px 8px rgba(148, 163, 184, 0.04);
+}
+
+.history-actions-flex {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.text-btn-backup {
+  font-family: var(--font-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0284c7; /* Sky-600 */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  transition: opacity 0.15s;
+}
+
+.text-btn-backup:hover {
+  opacity: 0.8;
+  text-decoration: underline;
 }
 
