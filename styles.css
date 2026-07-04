@@ -1128,6 +1128,7 @@ h1, h2, h3, h4, h5, h6 {
 .prize-rank-4 { background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); color: #0369a1; }
 .prize-rank-5 { background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); color: #047857; }
 .prize-rank-lose { background: #f1f5f9; border: 1px solid #cbd5e1; color: var(--text-light); }
+.prize-rank-pending { background: rgba(148, 163, 184, 0.1); border: 1px solid rgba(148, 163, 184, 0.3); color: #475569; }
 
 /* --- Scrollbar Customization --- */
 .scroll-stack-wrapper::-webkit-scrollbar,

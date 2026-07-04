@@ -201,6 +201,7 @@ const HISTORICAL_DRAWS = [
 
 let activePeriod = '3yr';
 let currentWeights = { ...adjustedWeights };
+let currentUpcomingDrawNo = getCalculatedLatestDraw();
 
 function updateActiveWeights() {
   const weights = {};
@@ -972,6 +973,7 @@ function saveTicketToHistory(set, score) {
   const item = {
     id: Date.now() + Math.random(),
     date: getFormattedDate(),
+    drawNo: currentUpcomingDrawNo,
     mode: MODE_DESCRIPTIONS[currentMode].name,
     set: [...set].sort((a,b)=>a-b),
     score: typeof score === 'number' ? score : null,
@@ -1045,11 +1047,13 @@ function renderHistoryLogs() {
       };
       const badgeClass = rank > 0 ? `prize-rank-${rank}` : 'prize-rank-lose';
       resultTagHtml = `<span class="prize-badge ${badgeClass}">${rankLabels[rank]}</span>`;
+    } else {
+      resultTagHtml = `<span class="prize-badge prize-rank-pending">${item.drawNo ? item.drawNo + '회 추첨 대기 ⏳' : '추첨 대기 ⏳'}</span>`;
     }
     
     card.innerHTML = `
       <div class="log-head">
-        <span class="log-date">${item.date} (${item.mode.toUpperCase()})</span>
+        <span class="log-date">${item.drawNo ? item.drawNo + '회차 | ' : ''}${item.date} (${item.mode.toUpperCase()})</span>
         <div class="log-actions">
           ${resultTagHtml}
           <button class="btn-delete-log" data-id="${item.id}" type="button">삭제</button>
@@ -1079,7 +1083,8 @@ function renderHistoryLogs() {
 }
 
 function updateBigDataDashboard() {
-  const totalGames = history.length;
+  const completedGames = history.filter(item => item.result !== null && item.result !== undefined);
+  const totalGames = completedGames.length;
   const spendAmount = totalGames * 1000;
   
   let winAmount = 0;
@@ -1155,7 +1160,13 @@ function runDrawMatcher() {
   if (isNaN(bonusNum) || bonusNum < 1 || bonusNum > 45) return;
   if (winningNums.includes(bonusNum)) return;
   
+  const matchDrawNo = parseInt(document.getElementById('lbl-loaded-draw').textContent);
+  if (isNaN(matchDrawNo)) return;
+  
   history.forEach(item => {
+    if (item.drawNo !== undefined && item.drawNo !== matchDrawNo) {
+      return;
+    }
     const mainMatches = item.set.filter(n => winningNums.includes(n));
     const matchCount = mainMatches.length;
     const bonusMatch = item.set.includes(bonusNum);
@@ -1266,6 +1277,7 @@ async function loadLatestActualDrawInfo() {
   }
   
   if (data && data.returnValue === "success") {
+    currentUpcomingDrawNo = targetDraw + 1;
     // 1. Fill matcher inputs
     document.getElementById('m-num-1').value = data.drwtNo1;
     document.getElementById('m-num-2').value = data.drwtNo2;
