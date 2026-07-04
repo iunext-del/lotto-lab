@@ -649,21 +649,27 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .chip-item {
-  background: rgba(255, 255, 255, 0.4);
-  border: 1px solid var(--border-element);
-  color: var(--text-light);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-bottom: 3px solid #cbd5e1;
+  background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+  color: var(--text-main);
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 800;
   border-radius: 6px;
-  padding: 4px 0;
-  font-size: 0.7rem;
-  font-weight: 700;
+  padding: 5px 0;
   text-align: center;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.04), inset 0 1px 0 #ffffff;
   transition: all 0.2s;
 }
 
 .chip-item.active {
-  background: rgba(244, 63, 94, 0.08);
-  border-color: rgba(244, 63, 94, 0.25);
-  color: #f43f5e;
+  background: linear-gradient(180deg, #f43f5e 0%, #e11d48 100%) !important;
+  border-color: #be123c !important;
+  border-bottom-color: #9f1239 !important;
+  color: #ffffff !important;
+  text-shadow: 0 -1px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 3px 6px rgba(190, 18, 60, 0.2), inset 0 1px 0 rgba(255,255,255,0.3) !important;
 }
 
 /* --- Stats Dashboard --- */
