@@ -1242,36 +1242,74 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .marking-btn {
-  border: 1px solid rgba(203, 213, 225, 0.5);
-  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-bottom: 3px solid #cbd5e1;
+  background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
   color: var(--text-main);
   font-family: var(--font-display);
-  font-size: 0.72rem;
-  font-weight: 700;
-  border-radius: 6px;
-  padding: 4px 0;
+  font-size: 0.75rem;
+  font-weight: 800;
+  border-radius: 8px;
+  padding: 6px 0;
   cursor: pointer;
   outline: none;
   text-align: center;
-  transition: all 0.15s ease;
+  position: relative;
+  transition: all 0.1s ease;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.04), inset 0 1px 0 #ffffff;
 }
 
 .marking-btn:hover {
-  background: #fff;
+  background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%);
   border-color: #cbd5e1;
+  border-bottom-color: #94a3b8;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(15, 23, 42, 0.06), inset 0 1px 0 #ffffff;
+}
+
+.marking-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.02);
 }
 
 .marking-btn.pinned {
-  background: rgba(52, 211, 153, 0.15) !important;
-  border-color: rgba(52, 211, 153, 0.5) !important;
-  color: #047857 !important;
+  background: linear-gradient(180deg, #34d399 0%, #059669 100%) !important;
+  border-color: #047857 !important;
+  border-bottom-color: #045a41 !important;
+  color: #ffffff !important;
+  text-shadow: 0 -1px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 3px 6px rgba(4, 120, 87, 0.2), inset 0 1px 0 rgba(255,255,255,0.3) !important;
+}
+
+.marking-btn.pinned:hover {
+  background: linear-gradient(180deg, #66ebb5 0%, #059669 100%) !important;
+  transform: translateY(-1px);
+}
+
+.marking-btn.pinned:active {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
 }
 
 .marking-btn.excluded {
-  background: rgba(244, 63, 94, 0.15) !important;
-  border-color: rgba(244, 63, 94, 0.5) !important;
-  color: #be123c !important;
+  background: linear-gradient(180deg, #f43f5e 0%, #e11d48 100%) !important;
+  border-color: #be123c !important;
+  border-bottom-color: #9f1239 !important;
+  color: #ffffff !important;
   text-decoration: line-through;
+  text-shadow: 0 -1px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 3px 6px rgba(190, 18, 60, 0.2), inset 0 1px 0 rgba(255,255,255,0.3) !important;
+}
+
+.marking-btn.excluded:hover {
+  background: linear-gradient(180deg, #ff6b84 0%, #e11d48 100%) !important;
+  transform: translateY(-1px);
+}
+
+.marking-btn.excluded:active {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
 }
 
 /* --- Latest Draw Info Card Styles --- */
