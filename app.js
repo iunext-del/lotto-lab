@@ -199,7 +199,7 @@ const HISTORICAL_DRAWS = [
   {drwNo:1229,drwNoDate:"2026-06-20",numbers:[12, 13, 29, 34, 37, 42],bnusNo:16}
 ];
 
-let activePeriod = 'all';
+let activePeriod = '3yr';
 let currentWeights = { ...adjustedWeights };
 
 function updateActiveWeights() {
@@ -794,6 +794,54 @@ function startSimulation() {
     }, 250);
 
   }, 1200);
+}
+
+// --- Direct Generation with No Animation (For Initial Load) ---
+function generateDirectlyNoAnimation() {
+  const setsCount = parseInt(selectSets.value) || 3;
+  const temp = parseFloat(selectTemp.value) || 1.0;
+  
+  let m1 = "stat", m2 = "stat";
+  if (currentMode === 2) { m1 = "rand"; m2 = "stat"; }
+  else if (currentMode === 3) { m1 = "stat"; m2 = "rand"; }
+  else if (currentMode === 4) { m1 = "rand"; m2 = "rand"; }
+  
+  const pool_1 = new Set(Array.from({ length: 45 }, (_, i) => i + 1).filter(n => !excludedNumbers.has(n)));
+  let results1, scores1;
+  
+  if (m1 === "stat") {
+    const res = generateStatSets(pool_1, setsCount, temp);
+    results1 = res.sets;
+    scores1 = res.scores;
+  } else {
+    results1 = generateRandSets(pool_1, setsCount);
+    scores1 = Array(setsCount).fill("Pure Random");
+  }
+  
+  const usedNumbers = new Set();
+  results1.forEach(s => s.forEach(n => usedNumbers.add(n)));
+  
+  let pool_2 = new Set([...pool_1].filter(x => !usedNumbers.has(x)));
+  if (pool_2.size < 6) {
+    const fallbackArr = Array.from(usedNumbers);
+    while (pool_2.size < 6 && fallbackArr.length > 0) {
+      pool_2.add(fallbackArr.pop());
+    }
+  }
+  
+  let results2, scores2;
+  
+  if (m2 === "stat") {
+    const res = generateStatSets(pool_2, setsCount, temp);
+    results2 = res.sets;
+    scores2 = res.scores;
+  } else {
+    results2 = generateRandSets(pool_2, setsCount);
+    scores2 = Array(setsCount).fill("Pure Random");
+  }
+  
+  renderDashboardResults(results1, scores1, usedNumbers, results2, scores2);
+  runDrawMatcher();
 }
 
 // --- Render Dashboard Results ---
@@ -1403,5 +1451,7 @@ fileImportHistory.addEventListener('change', (e) => {
 
 // Initialize Marking Board, Load Storage, and Auto Fetch Actual Draw Info on Page Load
 initMarkingBoard();
+updateActiveWeights();
+generateDirectlyNoAnimation();
 loadHistoryFromStorage();
 loadLatestActualDrawInfo();
