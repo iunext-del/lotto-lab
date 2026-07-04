@@ -890,7 +890,8 @@ function createSetCard(index, set, score) {
   const evens = 6 - odds;
   const isStat = typeof score === 'number';
   
-  const scoreText = isStat ? `적합도: ${score}/80.0` : "모드: Pure Random";
+  const formattedScore = isStat ? score.toFixed(1) : '';
+  const scoreText = isStat ? `적합도: ${formattedScore}/80.0` : "Pure Random";
   const scorePercent = isStat ? (score / 80) * 100 : 0;
   
   card.innerHTML = `
@@ -902,8 +903,8 @@ function createSetCard(index, set, score) {
       ${set.map(n => `<div class="ball-mini ${getBallColorClass(n)}">${n}</div>`).join('')}
     </div>
     <div class="card-foot">
-      <span>합계: ${sum}</span>
-      <span>홀짝: ${odds}:${evens}</span>
+      <span>합계: ${sum} | 홀짝: ${odds}:${evens}</span>
+      <span>${scoreText}</span>
     </div>
     ${isStat ? `
     <div class="bar-track">
