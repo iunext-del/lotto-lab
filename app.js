@@ -1052,7 +1052,7 @@ function createHistoryCardElement(item) {
     const badgeClass = rank > 0 ? `prize-rank-${rank}` : 'prize-rank-lose';
     resultTagHtml = `<span class="prize-badge ${badgeClass}">${rankLabels[rank]}</span>`;
   } else {
-    resultTagHtml = `<span class="prize-badge prize-rank-pending" style="display: inline-block; text-align: center; line-height: 1.25; padding: 4px 8px;">${item.drawNo ? item.drawNo + '회<br>추첨대기 ⏳' : '추첨대기 ⏳'}</span>`;
+    resultTagHtml = `<span class="prize-badge prize-rank-pending" style="display: inline-block; text-align: center; line-height: 1.25; padding: 4px 8px;">추첨대기 ⏳</span>`;
   }
   
   card.innerHTML = `
@@ -1574,6 +1574,31 @@ fileImportHistory.addEventListener('change', (e) => {
 });
 
 // --- Mobile Version Specific Event Handlers ---
+let mCurrentViewPart = 1;
+const mBtnTogglePart = document.getElementById('m-btn-toggle-part');
+if (mBtnTogglePart) {
+  mBtnTogglePart.addEventListener('click', () => {
+    const mResultsTitle = document.getElementById('m-results-title');
+    const mPart1List = document.getElementById('m-part1-list');
+    const mPart2List = document.getElementById('m-part2-list');
+    const setsCount = parseInt(selectSets.value) || 3;
+    
+    if (mCurrentViewPart === 1) {
+      mCurrentViewPart = 2;
+      if (mResultsTitle) mResultsTitle.textContent = `🚫 2차 제외형 추천 조합 (${setsCount}세트)`;
+      mBtnTogglePart.textContent = `➔ 1차 조합 보기`;
+      if (mPart1List) mPart1List.classList.add('hidden');
+      if (mPart2List) mPart2List.classList.remove('hidden');
+    } else {
+      mCurrentViewPart = 1;
+      if (mResultsTitle) mResultsTitle.textContent = `🎯 1차 추천 조합 (${setsCount}세트)`;
+      mBtnTogglePart.textContent = `제외형 조합 보기 ➔`;
+      if (mPart1List) mPart1List.classList.remove('hidden');
+      if (mPart2List) mPart2List.classList.add('hidden');
+    }
+  });
+}
+
 const mBtnGenerate = document.getElementById('m-btn-generate');
 if (mBtnGenerate) {
   mBtnGenerate.addEventListener('click', () => {
@@ -1586,6 +1611,7 @@ if (mBtnGenerate) {
     
     const mResultsArea = document.getElementById('m-results-area');
     const mPart1List = document.getElementById('m-part1-list');
+    const mPart2List = document.getElementById('m-part2-list');
     if (mResultsArea) mResultsArea.classList.add('hidden');
     
     setTimeout(() => {
@@ -1614,11 +1640,58 @@ if (mBtnGenerate) {
         });
       }
       
-      // Update mobile deck title dynamically
-      const mDeckTitle = document.querySelector('.m-deck-title');
-      if (mDeckTitle) {
-        mDeckTitle.textContent = `🎯 추천 번호 (${setsCount}세트)`;
+      // Generate Part 2 (Exclusion recommended combinations)
+      const usedNumbers = new Set();
+      results1.forEach(set => set.forEach(num => usedNumbers.add(num)));
+      
+      const pool_2 = new Set(Array.from({ length: 45 }, (_, i) => i + 1)
+        .filter(n => !excludedNumbers.has(n) && !usedNumbers.has(n)));
+      
+      let results2, scores2;
+      let m2 = "stat";
+      if (currentMode === 3 || currentMode === 4) { m2 = "rand"; }
+      
+      if (pool_2.size < 6) {
+        const fallbackPool = new Set(Array.from({ length: 45 }, (_, i) => i + 1).filter(n => !excludedNumbers.has(n)));
+        if (m2 === "stat") {
+          const res = generateStatSets(fallbackPool, setsCount, temp);
+          results2 = res.sets;
+          scores2 = res.scores;
+        } else {
+          results2 = generateRandSets(fallbackPool, setsCount);
+          scores2 = Array(setsCount).fill("Pure Random");
+        }
+      } else {
+        if (m2 === "stat") {
+          const res = generateStatSets(pool_2, setsCount, temp);
+          results2 = res.sets;
+          scores2 = res.scores;
+        } else {
+          results2 = generateRandSets(pool_2, setsCount);
+          scores2 = Array(setsCount).fill("Pure Random");
+        }
       }
+      
+      if (mPart2List) {
+        mPart2List.innerHTML = '';
+        results2.forEach((set, idx) => {
+          mPart2List.appendChild(createSetCard(idx + 1, set, scores2[idx]));
+        });
+      }
+      
+      // Reset toggle view state to Part 1 on new generation
+      mCurrentViewPart = 1;
+      const mResultsTitle = document.getElementById('m-results-title');
+      if (mResultsTitle) {
+        mResultsTitle.textContent = `🎯 1차 추천 조합 (${setsCount}세트)`;
+      }
+      if (mBtnTogglePart) {
+        mBtnTogglePart.textContent = `제외형 조합 보기 ➔`;
+      }
+      if (mPart1List) mPart1List.classList.remove('hidden');
+      if (mPart2List) mPart2List.classList.add('hidden');
+      
+      updateStatsDashboard([...results1, ...results2]);
       
       if (mResultsArea) mResultsArea.classList.remove('hidden');
       

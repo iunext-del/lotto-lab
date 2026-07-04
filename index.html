@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="styles.css?v=1.0.5">
+  <link rel="stylesheet" href="styles.css?v=1.0.6">
 </head>
 <body>
   <!-- Soft Pastel Background Orbs -->
@@ -390,8 +390,12 @@
         <button id="m-btn-generate" class="m-action-button" type="button">⚡ 로또 추천번호 추출</button>
         <div id="m-results-area" class="m-results-cards hidden">
           <div class="m-deck-box">
-            <h3 class="m-deck-title">🎯 추천 번호 (3세트)</h3>
+            <div class="m-deck-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px;">
+              <h3 class="m-deck-title" id="m-results-title" style="margin: 0; font-size: 0.88rem; font-weight: 800;">🎯 1차 추천 조합 (3세트)</h3>
+              <button id="m-btn-toggle-part" class="m-btn-toggle-view" type="button" style="font-size: 0.72rem; font-weight: 700; background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%); color: white; border: none; border-radius: 12px; padding: 4px 10px; cursor: pointer; box-shadow: 0 2px 6px rgba(167, 139, 250, 0.2); transition: all 0.2s ease; flex-shrink: 0;">제외형 조합 보기 ➔</button>
+            </div>
             <div id="m-part1-list" class="m-cards-list"></div>
+            <div id="m-part2-list" class="m-cards-list hidden"></div>
           </div>
         </div>
       </section>
@@ -414,6 +418,6 @@
   </div>
 
   <!-- JavaScript -->
-  <script src="app.js?v=1.0.5"></script>
+  <script src="app.js?v=1.0.6"></script>
 </body>
 </html>
