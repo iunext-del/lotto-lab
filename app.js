@@ -53,7 +53,6 @@ const selectSets = document.getElementById('input-sets');
 const selectTemp = document.getElementById('input-temp');
 const badgeStatus = document.getElementById('status-badge');
 const badgeText = document.getElementById('badge-text');
-const ballOutputRow = document.getElementById('ball-output-row');
 const resultsPanel = document.getElementById('results-panel');
 const part1List = document.getElementById('part1-list');
 const part2List = document.getElementById('part2-list');
@@ -480,15 +479,6 @@ function startSimulation() {
   
   resultsPanel.classList.add('hidden');
   
-  ballOutputRow.innerHTML = '';
-  for (let i = 1; i <= 6; i++) {
-    const slot = document.createElement('div');
-    slot.className = 'slot-circle empty';
-    slot.id = `slot-${i}`;
-    slot.textContent = '?';
-    ballOutputRow.appendChild(slot);
-  }
-
   initPhysicsBalls();
   isSpinning = true;
 
@@ -555,15 +545,6 @@ function startSimulation() {
           ballObj.exitProgress = 0;
         }
         
-        const currentSlotIdx = drawCount + 1;
-        setTimeout(() => {
-          const slot = document.getElementById(`slot-${currentSlotIdx}`);
-          if (slot) {
-            slot.className = `slot-circle ball-bounce-pop ${getBallColorClass(numToDraw)}`;
-            slot.textContent = numToDraw;
-          }
-        }, 350);
-        
         drawCount++;
       } else {
         clearInterval(drawInterval);
@@ -575,11 +556,11 @@ function startSimulation() {
           isDrawing = false;
           
           renderDashboardResults(results1, scores1, usedNumbers, results2, scores2);
-        }, 800);
+        }, 500);
       }
-    }, 750);
+    }, 250);
 
-  }, 1800);
+  }, 1200);
 }
 
 // --- Render Dashboard Results ---
