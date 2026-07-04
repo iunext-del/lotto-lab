@@ -21,12 +21,11 @@
   --pastel-green: #34d399;       /* Soft Mint */
   --pastel-orange: #ffb085;      /* Soft Peach */
   
-  /* Pastel Ball Gradients */
-  --ball-pastel-yellow: linear-gradient(135deg, #fef08a 0%, #eab308 100%);
-  --ball-pastel-blue: linear-gradient(135deg, #93c5fd 0%, #3b82f6 100%);
-  --ball-pastel-red: linear-gradient(135deg, #fecdd3 0%, #f43f5e 100%);
-  --ball-pastel-gray: linear-gradient(135deg, #cbd5e1 0%, #64748b 100%);
-  --ball-pastel-green: linear-gradient(135deg, #a7f3d0 0%, #10b981 100%);
+  --ball-pastel-yellow: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+  --ball-pastel-blue: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  --ball-pastel-red: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  --ball-pastel-gray: linear-gradient(135deg, #64748b 0%, #334155 100%);
+  --ball-pastel-green: linear-gradient(135deg, #10b981 0%, #047857 100%);
 }
 
 /* --- Base resets --- */

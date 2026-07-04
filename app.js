@@ -328,11 +328,11 @@ function initPhysicsBalls() {
 
 // Vibrant Pastel Ball Colors (Matched with CSS)
 function getBallPastelHex(num) {
-  if (num <= 10) return '#facc15';
-  if (num <= 20) return '#60a5fa';
-  if (num <= 30) return '#fb7185';
-  if (num <= 40) return '#94a3b8';
-  return '#34d399';
+  if (num <= 10) return '#f59e0b'; // Rich Amber
+  if (num <= 20) return '#2563eb'; // Rich Blue
+  if (num <= 30) return '#f43f5e'; // Rich Red
+  if (num <= 40) return '#64748b'; // Metallic Slate
+  return '#10b981'; // Rich Emerald Green
 }
 
 function getBallTextHex(num) {
