@@ -1025,7 +1025,7 @@ function loadHistoryFromStorage() {
 }
 
 function deleteHistoryItem(id) {
-  const item = history.find(item => item.id === id);
+  const item = history.find(item => Number(item.id) === Number(id));
   if (item) {
     const numbersKey = item.set.slice().sort((a,b)=>a-b).join(',');
     document.querySelectorAll('.card-item').forEach(card => {
@@ -1039,8 +1039,25 @@ function deleteHistoryItem(id) {
       }
     });
   }
-  history = history.filter(item => item.id !== id);
+  history = history.filter(item => Number(item.id) !== Number(id));
   localStorage.setItem('ados_lotto_history', JSON.stringify(history));
+
+  // Fallback scan: Ensure any card whose numbers are no longer in history gets its button restored
+  document.querySelectorAll('.card-item').forEach(card => {
+    const numbersKey = card.dataset.numbers;
+    const stillInHistory = history.some(logItem => 
+      logItem.set.slice().sort((a,b)=>a-b).join(',') === numbersKey
+    );
+    if (!stillInHistory) {
+      const btnSave = card.querySelector('.btn-save-set');
+      if (btnSave && btnSave.classList.contains('saved')) {
+        btnSave.textContent = "확정 저장";
+        btnSave.classList.remove('saved');
+        btnSave.disabled = false;
+      }
+    }
+  });
+
   renderHistoryLogs();
   updateBigDataDashboard();
 }
