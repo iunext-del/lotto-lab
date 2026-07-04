@@ -486,13 +486,13 @@ function updatePhysics(now = performance.now()) {
     ctx.lineWidth = 1;
     ctx.stroke();
     
-    ctx.font = 'bold 8.5px Inter, sans-serif';
+    ctx.font = 'bold 9.5px Inter, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     
     // Draw outline
     ctx.strokeStyle = 'rgba(15, 23, 42, 0.75)';
-    ctx.lineWidth = 1.1;
+    ctx.lineWidth = 1.4;
     ctx.lineJoin = 'round';
     ctx.miterLimit = 2;
     ctx.strokeText(ball.num.toString(), ball.x, ball.y + 0.4);
