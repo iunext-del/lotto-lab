@@ -899,6 +899,9 @@ function createSetCard(index, set, score) {
   const card = document.createElement('div');
   card.className = 'card-item';
   
+  const sortedSetKey = [...set].sort((a,b)=>a-b).join(',');
+  card.dataset.numbers = sortedSetKey;
+  
   const sum = set.reduce((a, b) => a + b, 0);
   const odds = set.filter(x => x % 2 !== 0).length;
   const evens = 6 - odds;
@@ -908,10 +911,15 @@ function createSetCard(index, set, score) {
   const scoreText = isStat ? `적합도: ${formattedScore}/80.0` : "Pure Random";
   const scorePercent = isStat ? (score / 80) * 100 : 0;
   
+  // Check if this set is already saved in history
+  const isAlreadySaved = history.some(item => item.set.slice().sort((a,b)=>a-b).join(',') === sortedSetKey);
+  
   card.innerHTML = `
     <div class="card-head">
       <span class="lbl-card-idx">SET 0${index}</span>
-      <button class="btn-save-set" type="button">확정 저장</button>
+      <button class="btn-save-set ${isAlreadySaved ? 'saved' : ''}" type="button" ${isAlreadySaved ? 'disabled' : ''}>
+        ${isAlreadySaved ? '저장완료 ✓' : '확정 저장'}
+      </button>
     </div>
     <div class="balls-line">
       ${set.map(n => `<div class="ball-mini ${getBallColorClass(n)}">${n}</div>`).join('')}
@@ -1017,6 +1025,20 @@ function loadHistoryFromStorage() {
 }
 
 function deleteHistoryItem(id) {
+  const item = history.find(item => item.id === id);
+  if (item) {
+    const numbersKey = item.set.slice().sort((a,b)=>a-b).join(',');
+    document.querySelectorAll('.card-item').forEach(card => {
+      if (card.dataset.numbers === numbersKey) {
+        const btnSave = card.querySelector('.btn-save-set');
+        if (btnSave) {
+          btnSave.textContent = "확정 저장";
+          btnSave.classList.remove('saved');
+          btnSave.disabled = false;
+        }
+      }
+    });
+  }
   history = history.filter(item => item.id !== id);
   localStorage.setItem('ados_lotto_history', JSON.stringify(history));
   renderHistoryLogs();
@@ -1027,6 +1049,17 @@ function clearHistoryAll() {
   if (confirm("정말로 확정 저장된 모든 로또 기록 대장을 비우시겠습니까? 누적 빅데이터가 초기화됩니다.")) {
     history = [];
     localStorage.removeItem('ados_lotto_history');
+    
+    // Restore all card buttons on screen
+    document.querySelectorAll('.card-item').forEach(card => {
+      const btnSave = card.querySelector('.btn-save-set');
+      if (btnSave) {
+        btnSave.textContent = "확정 저장";
+        btnSave.classList.remove('saved');
+        btnSave.disabled = false;
+      }
+    });
+    
     renderHistoryLogs();
     updateBigDataDashboard();
   }
