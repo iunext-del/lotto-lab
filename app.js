@@ -1019,67 +1019,84 @@ function clearHistoryAll() {
   }
 }
 
-function renderHistoryLogs() {
-  savedLogsList.innerHTML = '';
-  savedLogsCount.textContent = history.length;
+function createHistoryCardElement(item) {
+  const card = document.createElement('div');
+  card.className = 'log-item-card';
   
-  if (history.length === 0) {
-    savedLogsList.innerHTML = `<p class="no-history-placeholder">아직 저장된 확정 번호가 없습니다. 위의 추천 결과에서 [확정 저장]을 누르면 기록이 축적됩니다.</p>`;
-    return;
+  let resultTagHtml = '';
+  const hasResult = item.result !== null && item.result !== undefined;
+  
+  if (hasResult) {
+    const rank = item.result.rank;
+    const rankLabels = {
+      1: "1등 🎉",
+      2: "2등 🥈",
+      3: "3등 🥉",
+      4: "4등 5만원 💸",
+      5: "5등 5천원 🍀",
+      0: "낙첨"
+    };
+    const badgeClass = rank > 0 ? `prize-rank-${rank}` : 'prize-rank-lose';
+    resultTagHtml = `<span class="prize-badge ${badgeClass}">${rankLabels[rank]}</span>`;
+  } else {
+    resultTagHtml = `<span class="prize-badge prize-rank-pending">${item.drawNo ? item.drawNo + '회 추첨 대기 ⏳' : '추첨 대기 ⏳'}</span>`;
   }
   
-  history.forEach(item => {
-    const card = document.createElement('div');
-    card.className = 'log-item-card';
-    
-    let resultTagHtml = '';
-    const hasResult = item.result !== null && item.result !== undefined;
-    
-    if (hasResult) {
-      const rank = item.result.rank;
-      const rankLabels = {
-        1: "1등 🎉",
-        2: "2등 🥈",
-        3: "3등 🥉",
-        4: "4등 5만원 💸",
-        5: "5등 5천원 🍀",
-        0: "낙첨"
-      };
-      const badgeClass = rank > 0 ? `prize-rank-${rank}` : 'prize-rank-lose';
-      resultTagHtml = `<span class="prize-badge ${badgeClass}">${rankLabels[rank]}</span>`;
-    } else {
-      resultTagHtml = `<span class="prize-badge prize-rank-pending">${item.drawNo ? item.drawNo + '회 추첨 대기 ⏳' : '추첨 대기 ⏳'}</span>`;
-    }
-    
-    card.innerHTML = `
-      <div class="log-head">
-        <span class="log-date">${item.drawNo ? item.drawNo + '회차 | ' : ''}${item.date} (${item.mode.toUpperCase()})</span>
-        <div class="log-actions">
-          ${resultTagHtml}
-          <button class="btn-delete-log" data-id="${item.id}" type="button">삭제</button>
-        </div>
+  card.innerHTML = `
+    <div class="log-head">
+      <span class="log-date">${item.drawNo ? item.drawNo + '회차 | ' : ''}${item.date} (${item.mode.toUpperCase()})</span>
+      <div class="log-actions">
+        ${resultTagHtml}
+        <button class="btn-delete-log" data-id="${item.id}" type="button">삭제</button>
       </div>
-      <div class="balls-line">
-        ${item.set.map(num => {
-          let matchedClass = '';
-          if (hasResult && item.result.matchedNumbers.includes(num)) {
-            matchedClass = 'matched';
-          }
-          return `<div class="ball-mini ${getBallColorClass(num)} ${matchedClass}">${num}</div>`;
-        }).join('')}
-      </div>
-      <div class="card-foot">
-        <span>합계: ${item.set.reduce((a,b)=>a+b, 0)}</span>
-        <span>적합도: ${item.score !== null ? item.score : 'N/A'}</span>
-      </div>
-    `;
-    
-    card.querySelector('.btn-delete-log').addEventListener('click', () => {
-      deleteHistoryItem(item.id);
-    });
-    
-    savedLogsList.appendChild(card);
+    </div>
+    <div class="balls-line">
+      ${item.set.map(num => {
+        let matchedClass = '';
+        if (hasResult && item.result.matchedNumbers.includes(num)) {
+          matchedClass = 'matched';
+        }
+        return `<div class="ball-mini ${getBallColorClass(num)} ${matchedClass}">${num}</div>`;
+      }).join('')}
+    </div>
+    <div class="card-foot">
+      <span>합계: ${item.set.reduce((a,b)=>a+b, 0)}</span>
+      <span>적합도: ${item.score !== null ? (typeof item.score === 'number' ? item.score.toFixed(1) : item.score) : 'N/A'}</span>
+    </div>
+  `;
+  
+  card.querySelector('.btn-delete-log').addEventListener('click', () => {
+    deleteHistoryItem(item.id);
   });
+  
+  return card;
+}
+
+function renderHistoryLogs() {
+  if (savedLogsList) {
+    savedLogsList.innerHTML = '';
+    savedLogsCount.textContent = history.length;
+    
+    if (history.length === 0) {
+      savedLogsList.innerHTML = `<p class="no-history-placeholder">아직 저장된 확정 번호가 없습니다. 위의 추천 결과에서 [확정 저장]을 누르면 기록이 축적됩니다.</p>`;
+    } else {
+      history.forEach(item => {
+        savedLogsList.appendChild(createHistoryCardElement(item));
+      });
+    }
+  }
+  
+  const mSavedLogsList = document.getElementById('m-saved-logs-list');
+  if (mSavedLogsList) {
+    mSavedLogsList.innerHTML = '';
+    if (history.length === 0) {
+      mSavedLogsList.innerHTML = `<p class="m-no-history">저장된 로또 대장이 없습니다.</p>`;
+    } else {
+      history.forEach(item => {
+        mSavedLogsList.appendChild(createHistoryCardElement(item));
+      });
+    }
+  }
 }
 
 function updateBigDataDashboard() {
@@ -1288,6 +1305,10 @@ async function loadLatestActualDrawInfo() {
     document.getElementById('m-bonus').value = data.bnusNo;
     
     lblLoadedDraw.textContent = targetDraw;
+    const mLblLoadedDraw = document.getElementById('m-lbl-loaded-draw');
+    if (mLblLoadedDraw) {
+      mLblLoadedDraw.textContent = `${targetDraw}회`;
+    }
     
     // 2. Render Info Card details
     lblDate.textContent = `추첨일: ${data.drwNoDate}`;
@@ -1306,12 +1327,19 @@ async function loadLatestActualDrawInfo() {
     
     // Render info balls
     ballsRow.innerHTML = '';
+    const mBallsRow = document.getElementById('m-info-balls-row');
+    if (mBallsRow) mBallsRow.innerHTML = '';
+    
     const nums = [data.drwtNo1, data.drwtNo2, data.drwtNo3, data.drwtNo4, data.drwtNo5, data.drwtNo6];
     nums.forEach(num => {
       const ball = document.createElement('div');
       ball.className = `ball-mini ${getBallColorClass(num)}`;
       ball.textContent = num;
       ballsRow.appendChild(ball);
+      
+      if (mBallsRow) {
+        mBallsRow.appendChild(ball.cloneNode(true));
+      }
     });
     
     const plus = document.createElement('span');
@@ -1320,10 +1348,18 @@ async function loadLatestActualDrawInfo() {
     plus.style.fontWeight = 'bold';
     ballsRow.appendChild(plus);
     
+    if (mBallsRow) {
+      mBallsRow.appendChild(plus.cloneNode(true));
+    }
+    
     const bonusBall = document.createElement('div');
     bonusBall.className = `ball-mini ${getBallColorClass(data.bnusNo)}`;
     bonusBall.textContent = data.bnusNo;
     ballsRow.appendChild(bonusBall);
+    
+    if (mBallsRow) {
+      mBallsRow.appendChild(bonusBall.cloneNode(true));
+    }
     
     // Show/Hide Before Draw Banner
     if (beforeDraw) {
@@ -1461,6 +1497,53 @@ fileImportHistory.addEventListener('change', (e) => {
   reader.readAsText(file);
   fileImportHistory.value = ''; // clear input
 });
+
+// --- Mobile Version Specific Event Handlers ---
+const mBtnGenerate = document.getElementById('m-btn-generate');
+if (mBtnGenerate) {
+  mBtnGenerate.addEventListener('click', () => {
+    if (isDrawing) return;
+    
+    isDrawing = true;
+    mBtnGenerate.disabled = true;
+    const originalText = mBtnGenerate.textContent;
+    mBtnGenerate.textContent = "⚡ 추출 중...";
+    
+    const mResultsArea = document.getElementById('m-results-area');
+    const mPart1List = document.getElementById('m-part1-list');
+    if (mResultsArea) mResultsArea.classList.add('hidden');
+    
+    setTimeout(() => {
+      const setsCount = 3;
+      const temp = 1.0;
+      
+      const pool_1 = new Set(Array.from({ length: 45 }, (_, i) => i + 1).filter(n => !excludedNumbers.has(n)));
+      const res = generateStatSets(pool_1, setsCount, temp);
+      const results1 = res.sets;
+      const scores1 = res.scores;
+      
+      if (mPart1List) {
+        mPart1List.innerHTML = '';
+        results1.forEach((set, idx) => {
+          mPart1List.appendChild(createSetCard(idx + 1, set, scores1[idx]));
+        });
+      }
+      
+      if (mResultsArea) mResultsArea.classList.remove('hidden');
+      
+      mBtnGenerate.textContent = originalText;
+      mBtnGenerate.disabled = false;
+      isDrawing = false;
+      
+      runDrawMatcher();
+    }, 500);
+  });
+}
+
+const mBtnClearHistory = document.getElementById('m-btn-clear-history');
+if (mBtnClearHistory) {
+  mBtnClearHistory.addEventListener('click', clearHistoryAll);
+}
 
 // Initialize Marking Board, Load Storage, and Auto Fetch Actual Draw Info on Page Load
 initMarkingBoard();
