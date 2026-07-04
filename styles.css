@@ -606,6 +606,7 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.75rem;
   font-weight: 800;
   color: #ffffff;
+  line-height: 1;
   -webkit-text-stroke: 1.6px rgba(15, 23, 42, 0.85);
   paint-order: stroke fill;
   box-shadow: inset -1px -1px 3px rgba(0,0,0,0.15);
@@ -929,11 +930,24 @@ h1, h2, h3, h4, h5, h6 {
   background: #fff;
   outline: none;
   text-align: center;
+  padding: 0;
+  line-height: 36px;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 0.95rem;
   color: var(--text-main);
   transition: all 0.2s ease;
+}
+
+/* Hide spin-buttons completely to ensure horizontal center alignment */
+.match-input::-webkit-outer-spin-button,
+.match-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.match-input {
+  -moz-appearance: textfield;
 }
 
 .match-input:focus {
