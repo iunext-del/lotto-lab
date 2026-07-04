@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ADOS Lotto Lab - 파스텔톤 감성의 실시간 2D 물리 추첨 시뮬레이터가 결합된 프리미엄 로또 분포 적합도 분석 및 빅데이터 누적 대조 복기 웹 서비스.">
+  <title>ADOS Lotto Lab - Pastel Plausibility Simulator</title>
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Soft Pastel Background Orbs -->
+  <div class="pastel-orb orb-1"></div>
+  <div class="pastel-orb orb-2"></div>
+  <div class="pastel-orb orb-3"></div>
+
+  <div class="app-wrapper">
+    <!-- Header -->
+    <header class="app-header">
+      <h1 id="app-title"><span class="pastel-title-accent">ADOS</span> Lotto Lab</h1>
+      <p class="app-subtitle">2D Physics-Based Plausibility Simulator & Analytics</p>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="workspace-layout">
+      
+      <!-- Control Panel (Left Column) -->
+      <section class="workspace-sidebar panel glass-panel" aria-labelledby="title-control">
+        <div class="sidebar-header">
+          <h2 id="title-control" class="panel-title">설정 및 추첨제어</h2>
+          <span class="status-badge" id="status-badge">
+            <span class="badge-dot"></span>
+            <span id="badge-text">대기 중</span>
+          </span>
+        </div>
+
+        <!-- Mode Cards Selector -->
+        <div class="control-group">
+          <label class="group-label">추출 조합 모드</label>
+          <div class="mode-options-column">
+            <button id="btn-mode-1" class="mode-option active" data-mode="1" type="button">
+              <span class="opt-id">01</span>
+              <div class="opt-body">
+                <span class="opt-name">STAT - STAT</span>
+                <span class="opt-desc">1차 통계 + 2차 통계 (전형적 피팅 중심)</span>
+              </div>
+            </button>
+            <button id="btn-mode-2" class="mode-option" data-mode="2" type="button">
+              <span class="opt-id">02</span>
+              <div class="opt-body">
+                <span class="opt-name">RAND - STAT</span>
+                <span class="opt-desc">1차 무작위 + 2차 통계 (랜덤 후 균형 보완)</span>
+              </div>
+            </button>
+            <button id="btn-mode-3" class="mode-option" data-mode="3" type="button">
+              <span class="opt-id">03</span>
+              <div class="opt-body">
+                <span class="opt-name">STAT - RAND</span>
+                <span class="opt-desc">1차 통계 + 2차 무작위 (통계 선점 후 랜덤)</span>
+              </div>
+            </button>
+            <button id="btn-mode-4" class="mode-option" data-mode="4" type="button">
+              <span class="opt-id">04</span>
+              <div class="opt-body">
+                <span class="opt-name">RAND - RAND</span>
+                <span class="opt-desc">1차 무작위 + 2차 무작위 (순수 이중 무작위)</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Parameter Row Grid -->
+        <div class="parameter-grid">
+          <div class="param-item">
+            <label for="input-sets">세트 수</label>
+            <select id="input-sets" class="select-box">
+              <option value="5" selected>각 5세트 (총 10세트)</option>
+              <option value="3">각 3세트 (총 6세트)</option>
+              <option value="1">각 1세트 (총 2세트)</option>
+            </select>
+          </div>
+          <div class="param-item">
+            <label for="input-temp">다양성 온도</label>
+            <select id="input-temp" class="select-box">
+              <option value="0.5">T = 0.5 (Classic)</option>
+              <option value="1.0" selected>T = 1.0 (Balanced)</option>
+              <option value="2.0">T = 2.0 (Diverse)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- HTML5 Canvas 2D Physics Cage -->
+        <div class="physics-cage-area">
+          <div class="canvas-wrapper">
+            <canvas id="lotto-canvas" width="220" height="220"></canvas>
+            <div class="cage-stand"></div>
+            <div class="chute-exit"></div>
+          </div>
+          <button id="btn-generate" class="action-button-pastel" type="button">추첨기 가동하기</button>
+        </div>
+      </section>
+
+      <!-- Dashboard Contents (Right Column) -->
+      <div class="workspace-main">
+        
+        <!-- Top Output Row (Live Drawn Balls) -->
+        <section class="panel glass-panel draw-output-panel" aria-labelledby="title-draw">
+          <h2 id="title-draw" class="visually-hidden">실시간 추첨 현황</h2>
+          <div class="ball-container-flex" id="ball-output-row">
+            <div class="slot-circle empty" id="slot-1">?</div>
+            <div class="slot-circle empty" id="slot-2">?</div>
+            <div class="slot-circle empty" id="slot-3">?</div>
+            <div class="slot-circle empty" id="slot-4">?</div>
+            <div class="slot-circle empty" id="slot-5">?</div>
+            <div class="slot-circle empty" id="slot-6">?</div>
+          </div>
+        </section>
+
+        <!-- Right Side Scroll Container containing both Results Panel & Big Data Board -->
+        <div class="scroll-stack-wrapper">
+          
+          <!-- Results Panel -->
+          <section id="results-panel" class="panel glass-panel results-dashboard-container hidden" aria-labelledby="title-results">
+            <h2 id="title-results" class="results-main-title">이번 시뮬레이션 결과</h2>
+            
+            <div class="results-cards-grid">
+              <!-- Part 1 List -->
+              <div class="deck-box">
+                <h3 class="deck-title type-cyan">1차 추천 조합 (PART 1)</h3>
+                <div id="part1-list" class="cards-list">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+
+              <!-- Excluded Chip Grid -->
+              <div class="deck-box excluded-box">
+                <h3 class="deck-title type-red">🚫 2차 제외 숫자 풀</h3>
+                <p class="excluded-helper-text">1차 추천 번호가 모두 배제된 상호 차단 풀입니다.</p>
+                <div id="excluded-chips" class="chips-flex-grid">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+
+              <!-- Part 2 List -->
+              <div class="deck-box">
+                <h3 class="deck-title type-purple">2차 제외형 추천 조합 (PART 2)</h3>
+                <div id="part2-list" class="cards-list">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Stats Analytics Grid -->
+            <div class="analytics-card">
+              <h3 class="deck-title">📊 실시간 통계 모사 적합도 분석</h3>
+              <div class="charts-row">
+                
+                <div class="chart-item">
+                  <div id="chart-odd-even" class="pie-donut-chart">
+                    <div class="chart-inner-hole">
+                      <span id="label-odd-even" class="chart-value-text">-</span>
+                      <span class="chart-info-sub">홀짝 비율</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="chart-item">
+                  <div id="chart-high-low" class="pie-donut-chart">
+                    <div class="chart-inner-hole">
+                      <span id="label-high-low" class="chart-value-text">-</span>
+                      <span class="chart-info-sub">고저 비율</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Gaussian Sum Distribution Curve -->
+                <div class="chart-item gaussian-chart-item">
+                  <div class="gaussian-graphic-box">
+                    <svg viewBox="0 0 100 40" class="curve-svg">
+                      <path d="M 0 38 Q 20 38 40 28 T 50 2 T 60 28 Q 80 38 100 38" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+                      <path d="M 0 38 Q 20 38 40 28 T 50 2 T 60 28 Q 80 38 100 38" fill="none" stroke="url(#pastel-gradient-stroke)" stroke-width="2.5" class="svg-gradient-path"/>
+                      <circle id="gaussian-dot" cx="50" cy="20" r="3.5" fill="#818cf8" class="smooth-pulsing-dot"/>
+                      <defs>
+                        <linearGradient id="pastel-gradient-stroke" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" stop-color="#fda4af" />
+                          <stop offset="50%" stop-color="#818cf8" />
+                          <stop offset="100%" stop-color="#34d399" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                    <div class="gaussian-text-legends">
+                      <span>90 (최저합)</span>
+                      <span class="gaussian-mid-val">합계 평균: 138</span>
+                      <span>185 (최고합)</span>
+                    </div>
+                    <span class="chart-info-sub">합계 평균 적합도 분포</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+          <!-- New Big Data & History Dashboard (Persist Storage) -->
+          <section id="history-panel" class="panel glass-panel history-dashboard-container" aria-labelledby="title-history">
+            <div class="history-dashboard-header">
+              <h2 id="title-history" class="results-main-title">나의 로또 저장대장 및 빅데이터 복기판</h2>
+              <button id="btn-clear-history" class="text-btn-alert" type="button">기록 전체 초기화</button>
+            </div>
+
+            <!-- ROI and stats overview row -->
+            <div class="roi-summary-grid">
+              <div class="roi-card card-purple">
+                <span class="roi-lbl">총 모의 투자금</span>
+                <span class="roi-val" id="val-total-spend">0원</span>
+                <span class="roi-sub-desc">확정 저장된 게임 수 × 1,000원</span>
+              </div>
+              <div class="roi-card card-green">
+                <span class="roi-lbl">총 회수 상금</span>
+                <span class="roi-val" id="val-total-win">0원</span>
+                <span class="roi-sub-desc">판정된 당첨 등수별 가상 상금</span>
+              </div>
+              <div class="roi-card card-pink">
+                <span class="roi-lbl">누적 수익률 (ROI)</span>
+                <span class="roi-val" id="val-roi">0.0%</span>
+                <span class="roi-sub-desc">총 투자대비 회수상금 회수율</span>
+              </div>
+              <!-- Mini stats bar graph of prizes -->
+              <div class="roi-card card-stats-graph">
+                <span class="roi-lbl">등수별 당첨 횟수</span>
+                <div class="stats-ranks-row">
+                  <div class="rank-stat-bar"><span class="r-name">1등</span><div class="r-track"><div class="r-fill fill-1" id="rank-1-fill" style="width:0%"></div></div><span class="r-val" id="rank-1-val">0</span></div>
+                  <div class="rank-stat-bar"><span class="r-name">2등</span><div class="r-track"><div class="r-fill fill-2" id="rank-2-fill" style="width:0%"></div></div><span class="r-val" id="rank-2-val">0</span></div>
+                  <div class="rank-stat-bar"><span class="r-name">3등</span><div class="r-track"><div class="r-fill fill-3" id="rank-3-fill" style="width:0%"></div></div><span class="r-val" id="rank-3-val">0</span></div>
+                  <div class="rank-stat-bar"><span class="r-name">4등</span><div class="r-track"><div class="r-fill fill-4" id="rank-4-fill" style="width:0%"></div></div><span class="r-val" id="rank-4-val">0</span></div>
+                  <div class="rank-stat-bar"><span class="r-name">5등</span><div class="r-track"><div class="r-fill fill-5" id="rank-5-fill" style="width:0%"></div></div><span class="r-val" id="rank-5-val">0</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Draw Matcher Input Area -->
+            <div class="draw-matcher-box">
+              <div class="matcher-box-header">
+                <h3 class="box-subtitle">🎯 금주 실제 당첨 번호 대조기</h3>
+                <span class="loaded-draw-badge" id="loaded-draw-tag">조회 회차: <span id="lbl-loaded-draw">-</span>회</span>
+              </div>
+              <p class="matcher-desc">실제 추첨 당첨 번호를 대조해 등수 판정 및 누적 수익률 빅데이터를 업데이트합니다.</p>
+              
+              <div class="matcher-form-flex">
+                <div class="matcher-inputs-group">
+                  <input type="number" class="match-input" id="m-num-1" min="1" max="45" placeholder="1">
+                  <input type="number" class="match-input" id="m-num-2" min="1" max="45" placeholder="2">
+                  <input type="number" class="match-input" id="m-num-3" min="1" max="45" placeholder="3">
+                  <input type="number" class="match-input" id="m-num-4" min="1" max="45" placeholder="4">
+                  <input type="number" class="match-input" id="m-num-5" min="1" max="45" placeholder="5">
+                  <input type="number" class="match-input" id="m-num-6" min="1" max="45" placeholder="6">
+                  <span class="plus-sign">+</span>
+                  <input type="number" class="match-input bonus" id="m-bonus" min="1" max="45" placeholder="보너스">
+                </div>
+                <div class="matcher-buttons-flex">
+                  <button id="btn-fetch-latest" class="fetch-trigger-button" type="button">당첨번호 자동로드 🔄</button>
+                  <button id="btn-run-match" class="match-trigger-button" type="button">결과 대조 및 복기 가동</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Saved History list -->
+            <div class="saved-logs-box">
+              <h3 class="box-subtitle">📜 확정 저장된 로또 대장 (<span id="saved-logs-count">0</span>게임)</h3>
+              <div id="saved-logs-list" class="history-list-grid">
+                <!-- Dynamically populated from localStorage -->
+                <p class="no-history-placeholder">아직 저장된 확정 번호가 없습니다. 위의 추천 결과에서 [확정 저장]을 누르면 기록이 축적됩니다.</p>
+              </div>
+            </div>
+          </section>
+
+        </div>
+        
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>© 2026 ADOS Lotto Lab. 본 분석 자료는 실제 당첨 결과를 보장하지 않는 모의 검증 데이터입니다.</p>
+    </footer>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="app.js"></script>
+</body>
+</html>
