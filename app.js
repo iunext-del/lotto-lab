@@ -491,8 +491,8 @@ function updatePhysics(now = performance.now()) {
     ctx.textBaseline = 'middle';
     
     // Draw outline
-    ctx.strokeStyle = '#0f172a';
-    ctx.lineWidth = 1.8;
+    ctx.strokeStyle = 'rgba(15, 23, 42, 0.75)';
+    ctx.lineWidth = 1.1;
     ctx.lineJoin = 'round';
     ctx.miterLimit = 2;
     ctx.strokeText(ball.num.toString(), ball.x, ball.y + 0.4);

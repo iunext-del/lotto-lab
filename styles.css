@@ -606,11 +606,7 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.68rem;
   font-weight: 800;
   color: #ffffff;
-  text-shadow: 
-    -1px -1px 0 #0f172a,  
-     1px -1px 0 #0f172a,
-    -1px  1px 0 #0f172a,
-     1px  1px 0 #0f172a;
+  -webkit-text-stroke: 0.6px rgba(15, 23, 42, 0.85);
   box-shadow: inset -1px -1px 3px rgba(0,0,0,0.15);
 }
 
