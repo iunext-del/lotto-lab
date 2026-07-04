@@ -524,6 +524,11 @@ btnModeCards.forEach(card => {
     btnModeCards.forEach(c => c.classList.remove('active'));
     card.classList.add('active');
     currentMode = parseInt(card.dataset.mode);
+    
+    // Sync mobile select dropdown
+    const mSelectMode = document.getElementById('m-select-mode');
+    if (mSelectMode) mSelectMode.value = currentMode;
+    
     badgeText.textContent = `${MODE_DESCRIPTIONS[currentMode].name.toUpperCase()} 선택됨`;
   });
 });
@@ -1267,17 +1272,119 @@ async function tryFetchDraw(drawNo) {
 }
 
 // Background auto loader on page load
-async function loadLatestActualDrawInfo() {
+function renderDrawInfoDOM(data, targetDraw, beforeDraw) {
   const lblDate = document.getElementById('info-card-date');
   const lblPrize = document.getElementById('info-prize-val');
   const ballsRow = document.getElementById('info-balls-row');
   const banner = document.getElementById('before-draw-banner');
   const lblLoadedDraw = document.getElementById('lbl-loaded-draw');
   
+  currentUpcomingDrawNo = targetDraw + 1;
+  // 1. Fill matcher inputs
+  document.getElementById('m-num-1').value = data.drwtNo1;
+  document.getElementById('m-num-2').value = data.drwtNo2;
+  document.getElementById('m-num-3').value = data.drwtNo3;
+  document.getElementById('m-num-4').value = data.drwtNo4;
+  document.getElementById('m-num-5').value = data.drwtNo5;
+  document.getElementById('m-num-6').value = data.drwtNo6;
+  document.getElementById('m-bonus').value = data.bnusNo;
+  
+  lblLoadedDraw.textContent = targetDraw;
+  const mLblLoadedDraw = document.getElementById('m-lbl-loaded-draw');
+  if (mLblLoadedDraw) {
+    mLblLoadedDraw.textContent = `${targetDraw}회`;
+  }
+  
+  // 2. Render Info Card details
+  lblDate.textContent = `추첨일: ${data.drwNoDate}`;
+  
+  // Format Prize amount
+  const prizeAmt = data.firstWinamnt;
+  let prizeText = prizeAmt.toLocaleString() + '원';
+  if (prizeAmt > 0) {
+    const billionPart = Math.floor(prizeAmt / 100000000);
+    const restBillion = Math.round((prizeAmt % 100000000) / 10000000);
+    if (billionPart > 0) {
+      prizeText = `1인당 약 ${billionPart}.${restBillion}억 원 (${prizeAmt.toLocaleString()}원)`;
+    }
+  }
+  lblPrize.textContent = prizeText;
+  
+  // Render info balls
+  ballsRow.innerHTML = '';
+  const mBallsRow = document.getElementById('m-info-balls-row');
+  if (mBallsRow) mBallsRow.innerHTML = '';
+  
+  const nums = [data.drwtNo1, data.drwtNo2, data.drwtNo3, data.drwtNo4, data.drwtNo5, data.drwtNo6];
+  nums.forEach(num => {
+    const ball = document.createElement('div');
+    ball.className = `ball-mini ${getBallColorClass(num)}`;
+    ball.textContent = num;
+    ballsRow.appendChild(ball);
+    
+    if (mBallsRow) {
+      mBallsRow.appendChild(ball.cloneNode(true));
+    }
+  });
+  
+  const plus = document.createElement('span');
+  plus.textContent = '+';
+  plus.style.margin = '0 4px';
+  plus.style.fontWeight = 'bold';
+  ballsRow.appendChild(plus);
+  
+  if (mBallsRow) {
+    mBallsRow.appendChild(plus.cloneNode(true));
+  }
+  
+  const bonusBall = document.createElement('div');
+  bonusBall.className = `ball-mini ${getBallColorClass(data.bnusNo)}`;
+  bonusBall.textContent = data.bnusNo;
+  ballsRow.appendChild(bonusBall);
+  
+  if (mBallsRow) {
+    mBallsRow.appendChild(bonusBall.cloneNode(true));
+  }
+  
+  // Show/Hide Before Draw Banner
+  if (beforeDraw) {
+    banner.classList.remove('hidden');
+    banner.textContent = `⚠️ 금주 ${targetDraw + 1}회차는 아직 추첨 전입니다. 직전 ${targetDraw}회차 결과를 자동으로 로드했습니다.`;
+  } else {
+    banner.classList.add('hidden');
+  }
+  
+  // Trigger matcher
+  runDrawMatcher();
+}
+
+// Background auto loader on page load
+async function loadLatestActualDrawInfo() {
+  const ballsRow = document.getElementById('info-balls-row');
   let targetDraw = getCalculatedLatestDraw();
   let beforeDraw = false;
   let data = null;
   
+  // Try loading cached draw details instantly
+  const cachedStr = localStorage.getItem('ados_cached_draw_data');
+  if (cachedStr) {
+    try {
+      const cached = JSON.parse(cachedStr);
+      if (cached && cached.returnValue === "success") {
+        renderDrawInfoDOM(cached, cached.drwNo, (getCalculatedLatestDraw() > cached.drwNo));
+        console.log(`Loaded cached draw info for ${cached.drwNo} instantly.`);
+        
+        // If the cache contains the calculated latest target draw, we do NOT need to fetch!
+        if (cached.drwNo === targetDraw || cached.drwNo === targetDraw - 1) {
+          return; // Instant exit!
+        }
+      }
+    } catch (e) {
+      console.warn("Failed to parse cached draw data", e);
+    }
+  }
+  
+  // Otherwise fetch from remote proxy in background
   try {
     data = await tryFetchDraw(targetDraw);
     if (!data || data.returnValue === "fail") {
@@ -1294,83 +1401,9 @@ async function loadLatestActualDrawInfo() {
   }
   
   if (data && data.returnValue === "success") {
-    currentUpcomingDrawNo = targetDraw + 1;
-    // 1. Fill matcher inputs
-    document.getElementById('m-num-1').value = data.drwtNo1;
-    document.getElementById('m-num-2').value = data.drwtNo2;
-    document.getElementById('m-num-3').value = data.drwtNo3;
-    document.getElementById('m-num-4').value = data.drwtNo4;
-    document.getElementById('m-num-5').value = data.drwtNo5;
-    document.getElementById('m-num-6').value = data.drwtNo6;
-    document.getElementById('m-bonus').value = data.bnusNo;
-    
-    lblLoadedDraw.textContent = targetDraw;
-    const mLblLoadedDraw = document.getElementById('m-lbl-loaded-draw');
-    if (mLblLoadedDraw) {
-      mLblLoadedDraw.textContent = `${targetDraw}회`;
-    }
-    
-    // 2. Render Info Card details
-    lblDate.textContent = `추첨일: ${data.drwNoDate}`;
-    
-    // Format Prize amount
-    const prizeAmt = data.firstWinamnt;
-    let prizeText = prizeAmt.toLocaleString() + '원';
-    if (prizeAmt > 0) {
-      const billionPart = Math.floor(prizeAmt / 100000000);
-      const restBillion = Math.round((prizeAmt % 100000000) / 10000000);
-      if (billionPart > 0) {
-        prizeText = `1인당 약 ${billionPart}.${restBillion}억 원 (${prizeAmt.toLocaleString()}원)`;
-      }
-    }
-    lblPrize.textContent = prizeText;
-    
-    // Render info balls
-    ballsRow.innerHTML = '';
-    const mBallsRow = document.getElementById('m-info-balls-row');
-    if (mBallsRow) mBallsRow.innerHTML = '';
-    
-    const nums = [data.drwtNo1, data.drwtNo2, data.drwtNo3, data.drwtNo4, data.drwtNo5, data.drwtNo6];
-    nums.forEach(num => {
-      const ball = document.createElement('div');
-      ball.className = `ball-mini ${getBallColorClass(num)}`;
-      ball.textContent = num;
-      ballsRow.appendChild(ball);
-      
-      if (mBallsRow) {
-        mBallsRow.appendChild(ball.cloneNode(true));
-      }
-    });
-    
-    const plus = document.createElement('span');
-    plus.textContent = '+';
-    plus.style.margin = '0 4px';
-    plus.style.fontWeight = 'bold';
-    ballsRow.appendChild(plus);
-    
-    if (mBallsRow) {
-      mBallsRow.appendChild(plus.cloneNode(true));
-    }
-    
-    const bonusBall = document.createElement('div');
-    bonusBall.className = `ball-mini ${getBallColorClass(data.bnusNo)}`;
-    bonusBall.textContent = data.bnusNo;
-    ballsRow.appendChild(bonusBall);
-    
-    if (mBallsRow) {
-      mBallsRow.appendChild(bonusBall.cloneNode(true));
-    }
-    
-    // Show/Hide Before Draw Banner
-    if (beforeDraw) {
-      banner.classList.remove('hidden');
-      banner.textContent = `⚠️ 금주 ${targetDraw + 1}회차는 아직 추첨 전입니다. 직전 ${targetDraw}회차 결과를 자동으로 로드했습니다.`;
-    } else {
-      banner.classList.add('hidden');
-    }
-    
-    // Trigger matcher
-    runDrawMatcher();
+    // Save to local cache
+    localStorage.setItem('ados_cached_draw_data', JSON.stringify(data));
+    renderDrawInfoDOM(data, targetDraw, beforeDraw);
   } else {
     ballsRow.innerHTML = '<span class="loading-draw-text">공식 데이터를 불러오지 못했습니다.</span>';
   }
@@ -1393,45 +1426,79 @@ async function fetchLatestLottoNumbers() {
 }
 
 // --- Pinned / Excluded UI Marking Board Initialization ---
-function initMarkingBoard() {
-  const grid = document.getElementById('marking-board-grid');
-  if (!grid) return;
-  grid.innerHTML = '';
+function toggleNumberFilter(number) {
+  let nextState = 'default';
   
-  for (let i = 1; i <= 45; i++) {
-    const btn = document.createElement('button');
-    btn.type = 'button';
+  if (!pinnedNumbers.has(number) && !excludedNumbers.has(number)) {
+    if (pinnedNumbers.size < 5) {
+      pinnedNumbers.add(number);
+      nextState = 'pinned';
+      badgeText.textContent = `고정수 추가: ${number}번`;
+    } else {
+      excludedNumbers.add(number);
+      nextState = 'excluded';
+      badgeText.textContent = `제외수 추가: ${number}번`;
+    }
+  } else if (pinnedNumbers.has(number)) {
+    pinnedNumbers.delete(number);
+    excludedNumbers.add(number);
+    nextState = 'excluded';
+    badgeText.textContent = `제외수로 전환: ${number}번`;
+  } else if (excludedNumbers.has(number)) {
+    excludedNumbers.delete(number);
+    nextState = 'default';
+    badgeText.textContent = `필터 해제: ${number}번`;
+  }
+  
+  // Sync classes for all matching buttons in both desktop and mobile grids
+  const buttons = document.querySelectorAll(`.marking-btn[data-num="${number}"]`);
+  buttons.forEach(btn => {
     btn.className = 'marking-btn';
-    btn.textContent = i;
-    
-    btn.addEventListener('click', () => {
-      if (isDrawing) return;
-      
-      // Cycle: Default -> Pinned -> Excluded -> Default
-      if (!pinnedNumbers.has(i) && !excludedNumbers.has(i)) {
-        if (pinnedNumbers.size < 5) {
-          pinnedNumbers.add(i);
-          btn.className = 'marking-btn pinned';
-          badgeText.textContent = `고정수 추가: ${i}번`;
-        } else {
-          // If pins are full, go straight to Exclude
-          excludedNumbers.add(i);
-          btn.className = 'marking-btn excluded';
-          badgeText.textContent = `제외수 추가: ${i}번`;
-        }
-      } else if (pinnedNumbers.has(i)) {
-        pinnedNumbers.delete(i);
-        excludedNumbers.add(i);
-        btn.className = 'marking-btn excluded';
-        badgeText.textContent = `제외수로 전환: ${i}번`;
-      } else if (excludedNumbers.has(i)) {
-        excludedNumbers.delete(i);
-        btn.className = 'marking-btn';
-        badgeText.textContent = `필터 해제: ${i}번`;
-      }
-    });
-    
-    grid.appendChild(btn);
+    if (nextState === 'pinned') {
+      btn.classList.add('pinned');
+    } else if (nextState === 'excluded') {
+      btn.classList.add('excluded');
+    }
+  });
+}
+
+function createMarkingButton(number) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'marking-btn';
+  btn.textContent = number;
+  btn.dataset.num = number;
+  
+  if (pinnedNumbers.has(number)) {
+    btn.classList.add('pinned');
+  } else if (excludedNumbers.has(number)) {
+    btn.classList.add('excluded');
+  }
+  
+  btn.addEventListener('click', () => {
+    if (isDrawing) return;
+    toggleNumberFilter(number);
+  });
+  
+  return btn;
+}
+
+function initMarkingBoard() {
+  const desktopGrid = document.getElementById('marking-board-grid');
+  const mobileGrid = document.getElementById('m-marking-board-grid');
+  
+  if (desktopGrid) {
+    desktopGrid.innerHTML = '';
+    for (let i = 1; i <= 45; i++) {
+      desktopGrid.appendChild(createMarkingButton(i));
+    }
+  }
+  
+  if (mobileGrid) {
+    mobileGrid.innerHTML = '';
+    for (let i = 1; i <= 45; i++) {
+      mobileGrid.appendChild(createMarkingButton(i));
+    }
   }
 }
 
@@ -1514,19 +1581,35 @@ if (mBtnGenerate) {
     if (mResultsArea) mResultsArea.classList.add('hidden');
     
     setTimeout(() => {
-      const setsCount = 3;
-      const temp = 1.0;
+      const setsCount = parseInt(selectSets.value) || 3;
+      const temp = parseFloat(selectTemp.value) || 1.0;
+      
+      let m1 = "stat";
+      if (currentMode === 2 || currentMode === 4) { m1 = "rand"; }
       
       const pool_1 = new Set(Array.from({ length: 45 }, (_, i) => i + 1).filter(n => !excludedNumbers.has(n)));
-      const res = generateStatSets(pool_1, setsCount, temp);
-      const results1 = res.sets;
-      const scores1 = res.scores;
+      let results1, scores1;
+      
+      if (m1 === "stat") {
+        const res = generateStatSets(pool_1, setsCount, temp);
+        results1 = res.sets;
+        scores1 = res.scores;
+      } else {
+        results1 = generateRandSets(pool_1, setsCount);
+        scores1 = Array(setsCount).fill("Pure Random");
+      }
       
       if (mPart1List) {
         mPart1List.innerHTML = '';
         results1.forEach((set, idx) => {
           mPart1List.appendChild(createSetCard(idx + 1, set, scores1[idx]));
         });
+      }
+      
+      // Update mobile deck title dynamically
+      const mDeckTitle = document.querySelector('.m-deck-title');
+      if (mDeckTitle) {
+        mDeckTitle.textContent = `🎯 추천 번호 (${setsCount}세트)`;
       }
       
       if (mResultsArea) mResultsArea.classList.remove('hidden');
@@ -1544,6 +1627,66 @@ const mBtnClearHistory = document.getElementById('m-btn-clear-history');
 if (mBtnClearHistory) {
   mBtnClearHistory.addEventListener('click', clearHistoryAll);
 }
+
+// --- Mobile settings elements declaration ---
+const mSelectMode = document.getElementById('m-select-mode');
+const mSelectSets = document.getElementById('m-select-sets');
+const mSelectTemp = document.getElementById('m-select-temp');
+const mSelectPeriod = document.getElementById('m-select-period');
+
+// Sync Mobile -> Desktop
+if (mSelectMode) {
+  mSelectMode.addEventListener('change', () => {
+    currentMode = parseInt(mSelectMode.value);
+    
+    // Update desktop mode option highlights
+    const desktopCards = document.querySelectorAll('.mode-option');
+    desktopCards.forEach(card => {
+      card.classList.remove('active');
+      if (parseInt(card.dataset.mode) === currentMode) {
+        card.classList.add('active');
+      }
+    });
+    badgeText.textContent = `${MODE_DESCRIPTIONS[currentMode].name.toUpperCase()} 선택됨`;
+  });
+}
+
+if (mSelectSets) {
+  mSelectSets.addEventListener('change', () => {
+    selectSets.value = mSelectSets.value;
+  });
+}
+
+if (mSelectTemp) {
+  mSelectTemp.addEventListener('change', () => {
+    selectTemp.value = mSelectTemp.value;
+  });
+}
+
+if (mSelectPeriod) {
+  mSelectPeriod.addEventListener('change', () => {
+    selectPeriod.value = mSelectPeriod.value;
+    activePeriod = selectPeriod.value;
+    updateActiveWeights();
+    badgeText.textContent = `분석 통계 기간 변경: ${selectPeriod.options[selectPeriod.selectedIndex].text}`;
+  });
+}
+
+// Sync Desktop -> Mobile (Adds listeners to desktop selects to update mobile selects)
+selectSets.addEventListener('change', () => {
+  if (mSelectSets) mSelectSets.value = selectSets.value;
+});
+
+selectTemp.addEventListener('change', () => {
+  if (mSelectTemp) mSelectTemp.value = selectTemp.value;
+});
+
+// For Desktop Card Click: we already sync to .m-mode-chip in the desktop listener,
+// but since we replaced chips with select dropdown, let's sync to mSelectMode instead!
+// Let's modify the desktop listener sync code in app.js later. For now, let's add desktop selectPeriod listener sync:
+selectPeriod.addEventListener('change', () => {
+  if (mSelectPeriod) mSelectPeriod.value = selectPeriod.value;
+});
 
 // Initialize Marking Board, Load Storage, and Auto Fetch Actual Draw Info on Page Load
 initMarkingBoard();
