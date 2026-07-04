@@ -75,8 +75,7 @@ Forbidden_References: ["Company_Brain/*", "Project_Brain/*"]
 - **NEXT (Scope Protection)**:
   - 승인된 Deliverable을 구현하기 위한 내부 구현 세부사항은 Runtime가 자율적으로 판단합니다.
   - 다음 항목의 변경이 필요하면 Scope 변경으로 간주하며 즉시 구현을 중단하고 Stage 2(Proposal) 단계로 강제 회귀합니다.
-    - 승인되지 않은 파일
-    - 승인되지 않은 모듈
+    - ...
     - 승인되지 않은 외부 동작
     - 승인되지 않은 Public Interface
     - Observable Deliverables
@@ -84,6 +83,13 @@ Forbidden_References: ["Company_Brain/*", "Project_Brain/*"]
     - 검증(Validation), 최종 보고(Final Report) 및 커밋(Commit)이 완료되면 이전 구현(Implementation)은 종료된 것으로 간주합니다.
     - 사용자의 다음 요청이 이미 승인된 Scope 범주 내에 완전히 속하는 명백한 경미한 수정(Minor Correction)일 경우에만 Stage 3에 잔류하며 구현을 지속할 수 있습니다.
     - 만일 신규 기능, 신규 Scope, 신규 Deliverable, 신규 외부 동작이 추가되거나, 해당 요청이 단순 경미한 수정인지 확실하지 않은 경우(Uncertainty), Runtime은 즉시 Stage 1(Requirement Interpretation) 단계로 회귀해야 합니다. 판단이 모호할 때는 구현을 지속하는 대신 요건 해석 단계로 회귀하는 것을 원칙으로 합니다.
+  - **Runtime Control Documents**:
+    - Runtime Control Documents는 아래 파일 목록과 더불어, Runtime의 동작, 권한(Permission), 라우팅(Routing), 승인(Approval), 또는 기타 Runtime 제어 규칙을 정의하는 모든 문서를 포함합니다.
+      - `AGENTS.md`
+      - `Constitution.md`
+      - `Runtime_Kernel.md`
+      - `Thinking_Engine.md`
+    - Runtime Control Documents는 어떠한 경우에도 경미한 수정(Minor Correction) 예외 적용을 받지 않으며, 이 문서들에 대한 모든 수정은 지시사항의 크기에 상관없이 반드시 요건 해석(Requirement Interpretation) ➔ 제안(Proposal) ➔ 명시적 `"승인"` ➔ 구현(Implementation) 단계를 거쳐야 합니다.
 
 ## 5. Runtime Capability
 - **제약 사항**:
@@ -96,17 +102,17 @@ Forbidden_References: ["Company_Brain/*", "Project_Brain/*"]
 - **ALLOW**:
   - Stage 3의 검증(Validation) 완료 후 하나의 변경 단위를 요약한 로컬 Git Commit을 자율적으로 생성할 권한을 가집니다.
 - **FORBID**:
-  - 명시적 승인 없는 Git Push (Push는 오직 사용자의 명시적 승인 하에 실행해야 합니다).
+  - 예약 명령어 `푸시` 입력 없는 Git Push. Git Push는 오직 사용자가 예약 명령어 `푸시`를 입력하여 명시적으로 승인한 경우에만 실행되며, 작업 완료/검증/커밋/배포 등 어떠한 다른 행위로도 유추하여 실행하지 않습니다.
 
 ## 7. Reserved Command Matching
 - **Reserved Commands**: 다음 명령어들은 예약어(Reserved Commands)로 규정합니다.
   - `승인`
-  - `푸시 승인`
+  - `푸시`
   - `업무 종료`
-- **정밀 일치 제약**: 예약어는 오직 사용자의 입력 전체가 해당 명령어와 100% 일치할 때(Exact Match)만 인식됩니다. 예약어와 함께 추가적인 자연어가 혼합되어 입력될 경우, 해당 입력은 예약어로 간주하지 않고 일반적인 런타임 라우팅 과정에 따라 자연어로 처리합니다.
+- **정밀 일치 제약**: 예약어는 사용자의 입력에서 앞뒤 공백(Leading / Trailing Whitespace)을 제거(Trim)한 후, 입력 전체가 예약어와 정확히 일치(Exact Match)할 때만 인식합니다. 공백 제거 외에 대소문자 변환, 문장부호 제거, 유사어 매칭, Fuzzy 매칭, 부분 일치 등 어떠한 추가 정규화도 일절 금지됩니다. 예약어와 함께 추가적인 자연어가 혼합되어 입력될 경우, 해당 입력은 예약어로 간주하지 않고 일반적인 런타임 라우팅 과정에 따라 자연어로 처리합니다.
 
 ## 8. Work Closing Lifecycle
 - **종료 시퀀스**: `업무 종료` 명령어(정밀 일치 시)가 입력되면 런타임 종료 라이프사이클이 시작되며, 다음 순서대로 작업을 수행합니다.
   - Project Summary ➔ Brain Synchronization ➔ Knowledge Extraction ➔ Pending TODO Review ➔ Commit Status Review ➔ Push Confirmation ➔ Closing Report ➔ Idle
-- **오류 및 거부 처리**: 종료 단계 중 동기화(Sync), 지식 추출(Extraction), TODO 검토, 푸시 확인 등의 단계가 실패하거나 거부(Decline)되더라도 런타임은 종료 시퀀스를 중단하거나 교착 상태로 대기하지 않습니다. 실패/거부 사실을 솔직하게 기록하여 최종 보고서(Closing Report)에 포함한 뒤 시퀀스를 계속 진행하여 최종적으로 대기(Idle) 상태로 전환합니다.
+- **오류 및 거부 처리**: 종료 단계 중 동기화(Sync), 지식 추출(Extraction), TODO 검토, 푸시 확인 등의 단계가 실패하거나 거부(Decline)되더라도 런타임은 종료 시퀀스를 중단하거나 교착 상태로 대기하지 않습니다. 특히 **푸시 확인(Push Confirmation) 단계는 오직 예약 명령어 `푸시` 입력으로만 승인**되며, 그 외 다른 모든 입력은 거부(Decline)로 간주합니다. 실패/거부 사실을 솔직하게 기록하여 최종 보고서(Closing Report)에 포함한 뒤 시퀀스를 계속 진행하여 최종적으로 대기(Idle) 상태로 전환합니다.
 - **종료 메시지**: 런타임은 대기(Idle) 상태 진입 시 "감사합니다", "다음 프로젝트에서 뵙겠습니다"와 같은 대화형 종결 메시지로 종료 라이프사이클을 대체하지 않습니다.
