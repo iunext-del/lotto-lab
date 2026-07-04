@@ -259,6 +259,25 @@
               </div>
               <p class="matcher-desc">실제 추첨 당첨 번호를 대조해 등수 판정 및 누적 수익률 빅데이터를 업데이트합니다.</p>
               
+              <!-- Latest Official Draw Info Card (Auto Loaded on load) -->
+              <div class="latest-draw-info-card" id="latest-draw-info-card">
+                <div class="info-card-header">
+                  <span class="info-card-title">📢 지난회차 공식 당첨결과</span>
+                  <span class="info-card-date" id="info-card-date">추첨일: 로딩 중...</span>
+                </div>
+                <div class="info-card-body">
+                  <div class="info-balls-row" id="info-balls-row">
+                    <span class="loading-draw-text">데이터 수집 중...</span>
+                  </div>
+                  <div class="info-prize-amount" id="info-prize-amount">
+                    1등 당첨금: <span class="prize-bold" id="info-prize-val">-</span> (1인당 수령액)
+                  </div>
+                </div>
+                <div class="before-draw-banner hidden" id="before-draw-banner">
+                  ⚠️ 금주 회차는 아직 추첨 전입니다. 직전 회차 결과를 자동으로 로드했습니다.
+                </div>
+              </div>
+              
               <div class="matcher-form-flex">
                 <div class="matcher-inputs-group">
                   <input type="number" class="match-input" id="m-num-1" min="1" max="45" placeholder="1">

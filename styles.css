@@ -5,14 +5,14 @@
   --font-primary: 'Inter', system-ui, -apple-system, sans-serif;
   --font-display: 'Outfit', var(--font-primary);
   
-  --bg-app: #f4f7fc;
-  --bg-panel: rgba(255, 255, 255, 0.72);
-  --border-glass: rgba(255, 255, 255, 0.6);
-  --border-element: rgba(226, 232, 240, 0.8);
+  --bg-app: #d8e2ec;
+  --bg-panel: rgba(255, 255, 255, 0.94);
+  --border-glass: rgba(148, 163, 184, 0.4);
+  --border-element: rgba(148, 163, 184, 0.35);
   
-  --text-main: #334155;
-  --text-muted: #64748b;
-  --text-light: #94a3b8;
+  --text-main: #0f172a;
+  --text-muted: #334155;
+  --text-light: #475569;
   
   /* Soft Pastel Palette */
   --pastel-purple: #818cf8;      /* Lavender */
@@ -37,7 +37,7 @@
 }
 
 body {
-  background-color: var(--bg-app);
+  background: linear-gradient(135deg, #eef2f6 0%, #cbd5e1 100%);
   color: var(--text-main);
   font-family: var(--font-primary);
   min-height: 100vh;
@@ -1255,3 +1255,78 @@ body {
   color: #be123c !important;
   text-decoration: line-through;
 }
+
+/* --- Latest Draw Info Card Styles --- */
+.latest-draw-info-card {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--border-element);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(148, 163, 184, 0.05);
+}
+
+.info-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed rgba(148, 163, 184, 0.25);
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+
+.info-card-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.info-card-date {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.info-card-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.info-balls-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.info-prize-amount {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.prize-bold {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #c2410c; /* Deep Amber/Orange for high visibility */
+}
+
+.before-draw-banner {
+  width: 100%;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #b45309; /* warm dark orange */
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-top: 10px;
+  line-height: 1.4;
+}
+
+.loading-draw-text {
+  font-size: 0.72rem;
+  color: var(--text-light);
+  font-style: italic;
+}
+
