@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="styles.css?v=1.0.3">
+  <link rel="stylesheet" href="styles.css?v=1.0.4">
 </head>
 <body>
   <!-- Soft Pastel Background Orbs -->
@@ -85,16 +85,16 @@
           <div class="param-item">
             <label for="input-temp">다양성 온도</label>
             <select id="input-temp" class="select-box">
-              <option value="0.5">T = 0.5 (Classic)</option>
-              <option value="1.0" selected>T = 1.0 (Balanced)</option>
+              <option value="0.5" selected>T = 0.5 (Classic)</option>
+              <option value="1.0">T = 1.0 (Balanced)</option>
               <option value="2.0">T = 2.0 (Diverse)</option>
             </select>
           </div>
           <div class="param-item">
             <label for="input-period">분석 통계 기간</label>
             <select id="input-period" class="select-box">
-              <option value="all">역대 전체 누적</option>
-              <option value="3yr" selected>최근 3개년 (156회)</option>
+              <option value="all" selected>역대 전체 누적</option>
+              <option value="3yr">최근 3개년 (156회)</option>
               <option value="1yr">최근 1개년 (52회)</option>
             </select>
           </div>
@@ -357,8 +357,8 @@
               <div class="m-select-group">
                 <label class="m-control-label">다양성 온도</label>
                 <div class="m-pill-row" id="m-pill-temp">
-                  <button type="button" class="m-pill-btn" data-value="0.5">T = 0.5</button>
-                  <button type="button" class="m-pill-btn active" data-value="1.0">T = 1.0</button>
+                  <button type="button" class="m-pill-btn active" data-value="0.5">T = 0.5</button>
+                  <button type="button" class="m-pill-btn" data-value="1.0">T = 1.0</button>
                   <button type="button" class="m-pill-btn" data-value="2.0">T = 2.0</button>
                 </div>
               </div>
@@ -414,6 +414,6 @@
   </div>
 
   <!-- JavaScript -->
-  <script src="app.js?v=1.0.3"></script>
+  <script src="app.js?v=1.0.4"></script>
 </body>
 </html>

@@ -1052,12 +1052,12 @@ function createHistoryCardElement(item) {
     const badgeClass = rank > 0 ? `prize-rank-${rank}` : 'prize-rank-lose';
     resultTagHtml = `<span class="prize-badge ${badgeClass}">${rankLabels[rank]}</span>`;
   } else {
-    resultTagHtml = `<span class="prize-badge prize-rank-pending">${item.drawNo ? item.drawNo + '회 추첨 대기 ⏳' : '추첨 대기 ⏳'}</span>`;
+    resultTagHtml = `<span class="prize-badge prize-rank-pending" style="display: inline-block; text-align: center; line-height: 1.25; padding: 4px 8px;">${item.drawNo ? item.drawNo + '회<br>추첨대기 ⏳' : '추첨대기 ⏳'}</span>`;
   }
   
   card.innerHTML = `
     <div class="log-head">
-      <span class="log-date">${item.drawNo ? item.drawNo + '회차 | ' : ''}${item.date} (${item.mode.toUpperCase()})</span>
+      <span class="log-date">${item.drawNo ? item.drawNo + '회차 | ' : ''}${item.date}</span>
       <div class="log-actions">
         ${resultTagHtml}
         <button class="btn-delete-log" data-id="${item.id}" type="button">삭제</button>
