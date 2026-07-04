@@ -524,6 +524,16 @@ btnModeCards.forEach(card => {
     btnModeCards.forEach(c => c.classList.remove('active'));
     card.classList.add('active');
     currentMode = parseInt(card.dataset.mode);
+    
+    // Sync mobile chips
+    const mModeChips = document.querySelectorAll('.m-mode-chip');
+    mModeChips.forEach(chip => {
+      chip.classList.remove('active');
+      if (parseInt(chip.dataset.mode) === currentMode) {
+        chip.classList.add('active');
+      }
+    });
+    
     badgeText.textContent = `${MODE_DESCRIPTIONS[currentMode].name.toUpperCase()} 선택됨`;
   });
 });
@@ -1516,11 +1526,20 @@ if (mBtnGenerate) {
     setTimeout(() => {
       const setsCount = 3;
       const temp = 1.0;
+      let m1 = "stat";
+      if (currentMode === 2 || currentMode === 4) { m1 = "rand"; }
       
       const pool_1 = new Set(Array.from({ length: 45 }, (_, i) => i + 1).filter(n => !excludedNumbers.has(n)));
-      const res = generateStatSets(pool_1, setsCount, temp);
-      const results1 = res.sets;
-      const scores1 = res.scores;
+      let results1, scores1;
+      
+      if (m1 === "stat") {
+        const res = generateStatSets(pool_1, setsCount, temp);
+        results1 = res.sets;
+        scores1 = res.scores;
+      } else {
+        results1 = generateRandSets(pool_1, setsCount);
+        scores1 = Array(setsCount).fill("Pure Random");
+      }
       
       if (mPart1List) {
         mPart1List.innerHTML = '';
@@ -1539,6 +1558,29 @@ if (mBtnGenerate) {
     }, 500);
   });
 }
+
+// Sync Mobile Mode Chips Click Handlers
+const mModeChips = document.querySelectorAll('.m-mode-chip');
+mModeChips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    if (isDrawing) return;
+    mModeChips.forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    
+    currentMode = parseInt(chip.dataset.mode);
+    
+    // Also sync to desktop mode cards
+    const desktopCards = document.querySelectorAll('.mode-option');
+    desktopCards.forEach(card => {
+      card.classList.remove('active');
+      if (parseInt(card.dataset.mode) === currentMode) {
+        card.classList.add('active');
+      }
+    });
+    
+    badgeText.textContent = `${MODE_DESCRIPTIONS[currentMode].name.toUpperCase()} 선택됨`;
+  });
+});
 
 const mBtnClearHistory = document.getElementById('m-btn-clear-history');
 if (mBtnClearHistory) {

@@ -22,7 +22,6 @@
     <!-- Header -->
     <header class="app-header">
       <h1 id="app-title"><span class="pastel-title-accent">ADOS</span> Lotto Lab</h1>
-      <p class="app-subtitle">2D Physics-Based Plausibility Simulator & Analytics</p>
     </header>
 
     <!-- Main Workspace -->
@@ -328,6 +327,13 @@
 
       <!-- 2) 번호 추출기 -->
       <section class="m-generator-panel glass-panel">
+        <label class="m-group-label">추출 조합 모드</label>
+        <div class="m-mode-grid">
+          <button type="button" class="m-mode-chip active" data-mode="1">STAT-STAT</button>
+          <button type="button" class="m-mode-chip" data-mode="2">RAND-STAT</button>
+          <button type="button" class="m-mode-chip" data-mode="3">STAT-RAND</button>
+          <button type="button" class="m-mode-chip" data-mode="4">RAND-RAND</button>
+        </div>
         <button id="m-btn-generate" class="m-action-button" type="button">⚡ 로또 추천번호 추출</button>
         <div id="m-results-area" class="m-results-cards hidden">
           <div class="m-deck-box">
