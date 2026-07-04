@@ -449,11 +449,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Color Mappings */
-.color-p-yellow { background: var(--ball-pastel-yellow); color: #78350f; }
-.color-p-blue { background: var(--ball-pastel-blue); color: #ffffff; }
-.color-p-red { background: var(--ball-pastel-red); color: #ffffff; }
-.color-p-gray { background: var(--ball-pastel-gray); color: #ffffff; }
-.color-p-green { background: var(--ball-pastel-green); color: #ffffff; }
+.color-p-yellow { background: var(--ball-pastel-yellow); color: #0f172a; }
+.color-p-blue { background: var(--ball-pastel-blue); color: #0f172a; }
+.color-p-red { background: var(--ball-pastel-red); color: #0f172a; }
+.color-p-gray { background: var(--ball-pastel-gray); color: #0f172a; }
+.color-p-green { background: var(--ball-pastel-green); color: #0f172a; }
 
 /* Dynamic Glow Highlight for matched numbers */
 .slot-circle.matched,

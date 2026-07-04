@@ -294,7 +294,7 @@ ctx.scale(dpr, dpr);
 const cx = 110;
 const cy = 110;
 const cageRadius = 92;
-const ballRadius = 6.8;
+const ballRadius = 7.8;
 const restitution = 0.58;
 const gravity = 0.22;
 
@@ -336,8 +336,7 @@ function getBallPastelHex(num) {
 }
 
 function getBallTextHex(num) {
-  if (num <= 10) return '#78350f';
-  return '#ffffff';
+  return '#0f172a'; // 단일 진한 다크네이비 텍스트로 통일
 }
 
 function getBallColorClass(num) {
@@ -488,10 +487,10 @@ function updatePhysics(now = performance.now()) {
     ctx.stroke();
     
     ctx.fillStyle = ball.textHex;
-    ctx.font = 'bold 7px Inter, sans-serif';
+    ctx.font = 'bold 8.5px Inter, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(ball.num.toString(), ball.x, ball.y + 0.3);
+    ctx.fillText(ball.num.toString(), ball.x, ball.y + 0.4);
   });
 
   ctx.beginPath();
