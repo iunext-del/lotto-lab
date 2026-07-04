@@ -44,6 +44,10 @@ body {
   overflow: hidden; /* Prevent body scroll, layout fits screen */
 }
 
+.hidden {
+  display: none !important;
+}
+
 /* --- Soft Pastel Moving Orbs --- */
 .pastel-orb {
   position: fixed;
